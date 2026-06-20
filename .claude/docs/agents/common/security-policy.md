@@ -5,7 +5,7 @@
 ## 절대 금지 항목
 
 ### 운영 설정 접근
-- `application-prod*`, `application-production*`, `application-staging*` 파일 읽기·수정 금지
+- `application-prod*`, `application-production*` 파일 읽기·수정 금지
 - `.env`, `.env.*` 파일 읽기·수정 금지
 
 ### 보안 자산 접근

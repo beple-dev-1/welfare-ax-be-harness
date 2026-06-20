@@ -3,20 +3,22 @@
 ## 아키텍처 원칙: 공통 vs 경조사 전용 분리
 
 복지AX-BE는 현재 **경조사지원**을 첫 번째 업무로 개발하며, 향후 다른 성격의 복지 업무가 추가된다.
-소스 코드는 다음 원칙으로 분리한다:
+소스 코드는 다음 멀티모듈 원칙으로 분리한다:
 
-| 레이어 | 패키지 | 설명 |
-|-------|-------|------|
-| 공통 인프라 | `common/`, `config/`, `security/` | 모든 업무에서 사용하는 기반 코드 |
-| 복지 공통 도메인 | `member/`, `merchant/` | 모든 복지 업무에서 공유하는 도메인 |
-| 경조사 전용 | `ceremony/` | 경조사지원 전용 비즈니스 로직 |
+| 모듈 | 패키지 루트 | 설명 |
+|------|-----------|------|
+| `welfare-ax-common` | `com.beplepay.welfareaxbe.common` | 모든 모듈에서 사용하는 공통 인프라 (라이브러리) |
+| `welfare-ax-domain` | `com.beplepay.welfareaxbe.domain` | Entity·Repository — 모든 실행 모듈이 의존 (라이브러리) |
+| `welfare-ax-user` | `com.beplepay.welfareaxbe.user` | 사용자 API — 경조사 신청·승인·지급 (실행 모듈) |
+| `welfare-ax-admin` | `com.beplepay.welfareaxbe.admin` | 관리자 API (실행 모듈, skeleton) |
+| `welfare-ax-batch` | `com.beplepay.welfareaxbe.batch` | 배치 처리 (실행 모듈, skeleton, 별도 개발) |
 
-새로운 복지 업무 추가 시: 새 최상위 패키지(예: `housing/`, `health/`)를 추가하고 `common/`의 공통 기능을 활용한다.
+새로운 복지 업무 추가 시: 새 실행 모듈(예: `welfare-ax-housing`)을 추가하고 `welfare-ax-common`, `welfare-ax-domain`의 공통 기능을 활용한다.
 
 ## 새 구현 전 확인 사항
 
-1. `com.beplepay.welfareaxbe.common` 패키지에 공통 기능이 이미 있는지 확인한다.
-2. 경조사 전용 코드인지 공통으로 올릴 코드인지 먼저 판단한다.
+1. `welfare-ax-common` 모듈에 공통 기능이 이미 있는지 확인한다.
+2. 신규 코드가 domain(entity/repo), user(controller/service/dto), common(공통 인프라) 중 어디에 속하는지 먼저 판단한다.
 3. 프로젝트 유형에 맞는 가이드 문서를 먼저 읽는다.
 4. 기존 유사 구현이 있으면 패턴을 맞춘다 — code-investigator 에이전트 활용.
 
@@ -40,13 +42,6 @@
 - N+1 문제: `@EntityGraph` 또는 `fetch join` 명시적 사용
 - 트랜잭션 범위: `@Transactional`은 Service 레이어에서 관리
 - 트랜잭션 내 외부 REST 호출 금지 (DB 커넥션풀 고갈 위험)
-
-## 배치 처리 기준
-
-- Spring Batch 5.x 기반 Job으로 구현
-- 배치 Job은 멱등성 보장: 동일 조건 재실행 시 중복 처리 없음
-- 실패 시 재처리 로직 명시적 설계
-- 배치 실행 결과는 로그 및 DB에 기록
 
 ## 보안 구현 기준
 

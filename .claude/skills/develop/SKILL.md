@@ -7,7 +7,7 @@
 /develop {스코프} [{과업번호}] [자동]
 ```
 
-스코프 목록: `welfare-api`, `admin`, `batch`, `common`
+스코프 목록: `ceremony`, `member`, `merchant`, `common`, `admin`, `batch`
 
 ## 절차
 
@@ -17,12 +17,11 @@
 
 ### 2단계: 시크릿 보호 활성화
 - secrets-guard 스킬을 내부적으로 실행한다.
-- 운영 설정 파일 (application-prod*, application-staging*) 접근 금지를 재확인한다.
+- 운영 설정 파일 (application-prod*) 접근 금지를 재확인한다.
 
 ### 3단계: 개발 가이드 참조
 - `.claude/config/project.yaml`에서 해당 프로젝트의 `guideline` 필드를 확인한다.
 - `.claude/docs/guideline/guide-springboot-web.md`를 읽는다.
-- 배치 스코프인 경우 `.claude/docs/guideline/guide-batch.md`를 추가로 읽는다.
 
 ### 4단계: 작업 브랜치 확인
 - 현재 브랜치를 확인한다 (`git branch --show-current`).

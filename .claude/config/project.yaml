@@ -9,15 +9,45 @@ db:
   vendor: postgresql
 
 projects:
-  - name: welfare-ax-be
-    shortName: ax
-    description: 복지AX 백엔드 (경조사지원 API — 신청·승인·지급·정산)
-    dir: .
+  - name: welfare-ax-user
+    shortName: user
+    description: 사용자 API (경조사 신청·승인·지급·정산)
+    dir: welfare-ax-user
     buildTool: gradle
     guideline: guide-springboot-web
     conditionalGuides:
       - condition: jpa
         guide: guide-jpa
-      - condition: batch
-        guide: guide-batch
+    outputDir: target
+
+  - name: welfare-ax-admin
+    shortName: admin
+    description: 관리자 API (skeleton)
+    dir: welfare-ax-admin
+    buildTool: gradle
+    guideline: guide-springboot-web
+    outputDir: target
+
+  - name: welfare-ax-batch
+    shortName: batch
+    description: 배치 처리 (skeleton)
+    dir: welfare-ax-batch
+    buildTool: gradle
+    outputDir: target
+
+  - name: welfare-ax-domain
+    shortName: domain
+    description: 공통 도메인 (Entity, Repository)
+    dir: welfare-ax-domain
+    buildTool: gradle
+    conditionalGuides:
+      - condition: jpa
+        guide: guide-jpa
+    outputDir: target
+
+  - name: welfare-ax-common
+    shortName: common
+    description: 공통 인프라 (예외, 응답 래퍼, 유틸)
+    dir: welfare-ax-common
+    buildTool: gradle
     outputDir: target

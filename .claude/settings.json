@@ -15,8 +15,6 @@
       "Read(**/id_rsa)",
       "Read(**/id_rsa.pub)",
       "Read(**/*.jks)",
-      "Read(**/src/main/resources/application-dev*)",
-      "Read(**/src/main/resources/application-stg*)",
       "Read(**/src/main/resources/application-prod*)",
       "Read(**/src/main/resources/application-production*)",
       "Edit(**/.env)",
@@ -26,8 +24,6 @@
       "Edit(**/*.p12)",
       "Edit(**/*.jks)",
       "Edit(**/id_rsa)",
-      "Edit(**/src/main/resources/application-dev*)",
-      "Edit(**/src/main/resources/application-stg*)",
       "Edit(**/src/main/resources/application-prod*)",
       "Edit(**/src/main/resources/application-production*)",
       "Write(**/.env)",
@@ -37,8 +33,6 @@
       "Write(**/*.p12)",
       "Write(**/*.jks)",
       "Write(**/id_rsa)",
-      "Write(**/src/main/resources/application-dev*)",
-      "Write(**/src/main/resources/application-stg*)",
       "Write(**/src/main/resources/application-prod*)",
       "Write(**/src/main/resources/application-production*)"
     ]

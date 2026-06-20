@@ -18,39 +18,63 @@
 | 프레임워크 | Spring Boot 4.1.0 (Jakarta EE 10 기반) |
 | Web | Spring MVC (`spring-boot-starter-webmvc`) |
 | 보안 | Spring Security 6.x (`spring-boot-starter-security`) |
+| 인증 | JWT (`io.jsonwebtoken:jjwt 0.12.6`) |
 | ORM | Spring Data JPA 3.x / Hibernate 6 |
 | DB | PostgreSQL |
 | 유틸 | Lombok |
-| 빌드 | Gradle 8.x (Kotlin DSL) |
+| 빌드 | Gradle 9.x (Kotlin DSL, 멀티모듈) |
 
-## 패키지 구조 원칙
+## 모듈 구조
 
 ```
-com.beplepay.welfareaxbe
-├── config/           # Spring 설정 (Security, JPA 등)
-├── common/           # 공통 인프라 (예외, 응답 래퍼, 유틸)
-├── member/           # 회원 관리 — 복지 공통
-├── merchant/         # 가맹점 관리 — 복지 공통
-└── ceremony/         # 경조사 전용 (현재 구현 업무)
-    ├── application/  # 경조사 신청
-    ├── approval/     # 승인 처리
-    ├── payment/      # 지급 처리
-    └── settlement/   # 정산
+welfare-ax-be/                      ← 루트 (오케스트레이션만, src 없음)
+├── welfare-ax-common/              ← 공통 인프라 라이브러리
+│   └── com.beplepay.welfareaxbe.common
+│       ├── exception/              (공통 예외, GlobalExceptionHandler)
+│       ├── response/               (ApiResponse 래퍼)
+│       └── util/
+├── welfare-ax-domain/              ← 공통 도메인 라이브러리 (Entity, Repository)
+│   └── com.beplepay.welfareaxbe.domain
+│       ├── member/                 (회원 Entity, Repository)
+│       ├── merchant/               (가맹점 Entity, Repository)
+│       └── ceremony/               (경조사 Entity, Repository)
+├── welfare-ax-user/                ← 사용자 API 실행 모듈 (port: 8080)
+│   └── com.beplepay.welfareaxbe.user
+│       ├── config/                 (Security, Web 설정)
+│       ├── security/               (JWT 필터, 토큰 처리)
+│       └── ceremony/
+│           ├── application/        (경조사 신청)
+│           ├── approval/           (승인 처리)
+│           └── payment/            (지급 처리)
+├── welfare-ax-admin/               ← 관리자 API 실행 모듈 (port: 8081, skeleton)
+│   └── com.beplepay.welfareaxbe.admin
+└── welfare-ax-batch/               ← 배치 실행 모듈 (port: 8082, skeleton)
+    └── com.beplepay.welfareaxbe.batch
+```
+
+**모듈 의존 관계:**
+```
+welfare-ax-user  ──┐
+welfare-ax-admin ──┼──→ welfare-ax-domain ──→ welfare-ax-common
+welfare-ax-batch ──┘
 ```
 
 **분리 원칙:**
-- `common/`, `member/`, `merchant/`, `config/` → 모든 복지 업무에서 재사용
-- `ceremony/` → 경조사 전용, 다른 복지 업무 추가 시 새 최상위 패키지 추가
+- `welfare-ax-common`, `welfare-ax-domain` → 모든 실행 모듈에서 재사용하는 라이브러리 (bootJar 없음)
+- `welfare-ax-user/admin/batch` → 각각 독립 실행 가능한 bootJar 생성
+- 각 실행 모듈은 `scanBasePackages = "com.beplepay.welfareaxbe"`로 모든 하위 패키지 스캔
 
 ## 빌드·실행 명령
 
 ```bash
-./gradlew build              # 빌드
-./gradlew bootRun            # 애플리케이션 실행
-./gradlew test               # 전체 테스트
-./gradlew test --tests "com.beplepay.welfareaxbe.SomeTest"         # 특정 클래스
-./gradlew test --tests "com.beplepay.welfareaxbe.SomeTest.메서드"  # 특정 메서드
-./gradlew clean build        # 클린 빌드
+./gradlew build                                    # 전체 빌드
+./gradlew :welfare-ax-user:bootRun                 # 사용자 API 실행 (port 8080)
+./gradlew :welfare-ax-admin:bootRun                # 관리자 API 실행 (port 8081)
+./gradlew :welfare-ax-batch:bootRun                # 배치 실행 (port 8082)
+./gradlew test                                     # 전체 테스트
+./gradlew :welfare-ax-user:test                    # 특정 모듈 테스트
+./gradlew :welfare-ax-user:test --tests "*.SomeTest"   # 특정 클래스
+./gradlew clean build                              # 클린 빌드
 ```
 
 Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
@@ -91,7 +115,7 @@ Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
 | MR 리뷰 | `/mr-review` | GitLab MR diff 리뷰 |
 | 인수인계 | `/pack` | 세션 종료 전 상태 기록 |
 
-스코프 목록: `ceremony`, `member`, `merchant`, `common`, `batch`
+스코프 목록: `ceremony`, `member`, `merchant`, `common`, `admin`, `batch`
 
 ## 하네스 구조
 
@@ -112,7 +136,7 @@ Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
 
 ## 주의사항
 
-- `application-prod*`, `application-staging*`, `.env` 파일은 절대 읽거나 수정하지 않는다.
+- `application-prod*`, `.env` 파일은 절대 읽거나 수정하지 않는다.
 - 경조사 지급·취소·정산 로직은 반드시 계획서 작성 후 구현한다.
 - 트랜잭션 내 외부 REST 호출 금지 (DB 커넥션풀 고갈 위험).
 - `javax.*` 대신 `jakarta.*` 사용 (Spring Boot 4.x / Jakarta EE 10).

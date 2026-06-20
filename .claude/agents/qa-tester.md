@@ -16,7 +16,12 @@ sonnet
 
 ### 2. 테스트 실행
 ```bash
-./gradlew test --tests "com.beplepay.welfareaxbe.{테스트클래스}" 2>&1
+# 특정 모듈 전체 테스트
+./gradlew :{모듈}:test 2>&1
+# 특정 클래스
+./gradlew :{모듈}:test --tests "*.{테스트클래스}" 2>&1
+# 전체 모듈
+./gradlew test 2>&1
 ```
 
 ### 3. 결과 집계

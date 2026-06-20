@@ -5,10 +5,9 @@
 
 ## 차단 대상
 
-### 운영/스테이징 설정 파일
+### 운영 설정 파일
 - `application-prod.yaml`, `application-prod.properties`
 - `application-production.yaml`
-- `application-staging.yaml`, `application-staging.properties`
 - `.env`, `.env.*`
 
 ### 보안 자산

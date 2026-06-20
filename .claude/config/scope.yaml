@@ -2,10 +2,11 @@
 # /develop {스코프} 호출 시 AI의 수정 가능 경로를 제한한다.
 #
 # 분리 원칙:
-#   ceremony/* — 경조사 전용 코드
-#   member/*, merchant/* — 복지 공통 (모든 업무에서 재사용)
-#   common/*, config/* — 인프라 공통
-#   batch/* — 배치 처리
+#   ceremony/* — 경조사 전용 (welfare-ax-user + welfare-ax-domain)
+#   member/*, merchant/* — 공통 도메인 (welfare-ax-domain)
+#   common/* — 공통 인프라 (welfare-ax-common)
+#   admin/* — 관리자 영역 (welfare-ax-admin)
+#   batch/* — 배치 영역 (welfare-ax-batch)
 
 features:
   scope:
@@ -15,46 +16,60 @@ scopes:
   - id: ceremony
     description: 경조사지원 전용 (신청·승인·지급·정산)
     allowedPaths:
-      - src/main/java/com/beplepay/welfareaxbe/ceremony/**
-      - src/test/java/com/beplepay/welfareaxbe/ceremony/**
+      - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/ceremony/**
+      - welfare-ax-user/src/test/java/com/beplepay/welfareaxbe/user/ceremony/**
+      - welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain/ceremony/**
+      - welfare-ax-domain/src/test/java/com/beplepay/welfareaxbe/domain/ceremony/**
     sharedModules:
-      - src/main/java/com/beplepay/welfareaxbe/common/**
-      - src/main/java/com/beplepay/welfareaxbe/member/**
-      - src/main/java/com/beplepay/welfareaxbe/merchant/**
+      - welfare-ax-common/src/main/java/**
+      - welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain/member/**
+      - welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain/merchant/**
 
   - id: member
-    description: 회원 관리 — 복지 공통
+    description: 회원 관리 — 복지 공통 도메인
     allowedPaths:
-      - src/main/java/com/beplepay/welfareaxbe/member/**
-      - src/test/java/com/beplepay/welfareaxbe/member/**
+      - welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain/member/**
+      - welfare-ax-domain/src/test/java/com/beplepay/welfareaxbe/domain/member/**
     sharedModules:
-      - src/main/java/com/beplepay/welfareaxbe/common/**
+      - welfare-ax-common/src/main/java/**
 
   - id: merchant
-    description: 가맹점 관리 — 복지 공통
+    description: 가맹점 관리 — 복지 공통 도메인
     allowedPaths:
-      - src/main/java/com/beplepay/welfareaxbe/merchant/**
-      - src/test/java/com/beplepay/welfareaxbe/merchant/**
+      - welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain/merchant/**
+      - welfare-ax-domain/src/test/java/com/beplepay/welfareaxbe/domain/merchant/**
     sharedModules:
-      - src/main/java/com/beplepay/welfareaxbe/common/**
+      - welfare-ax-common/src/main/java/**
 
   - id: common
-    description: 공통 인프라 (예외, 응답 래퍼, 보안, 설정)
+    description: 공통 인프라 (예외, 응답 래퍼, 유틸, 보안, 설정)
     allowedPaths:
-      - src/main/java/com/beplepay/welfareaxbe/common/**
-      - src/main/java/com/beplepay/welfareaxbe/config/**
-      - src/main/java/com/beplepay/welfareaxbe/security/**
-      - src/test/java/com/beplepay/welfareaxbe/common/**
-      - src/main/resources/application.yaml
-      - src/main/resources/application-local.yaml
-      - src/main/resources/application-dev.yaml
+      - welfare-ax-common/src/main/java/**
+      - welfare-ax-common/src/test/java/**
+      - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/config/**
+      - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/security/**
+      - welfare-ax-user/src/main/resources/application.yaml
+      - welfare-ax-user/src/main/resources/application-local.yaml
     sharedModules: []
 
-  - id: batch
-    description: 배치 처리 (경조사 정산, 만료 처리)
+  - id: admin
+    description: 관리자 API (welfare-ax-admin)
     allowedPaths:
-      - src/main/java/com/beplepay/welfareaxbe/batch/**
-      - src/test/java/com/beplepay/welfareaxbe/batch/**
+      - welfare-ax-admin/src/main/java/**
+      - welfare-ax-admin/src/test/java/**
+      - welfare-ax-admin/src/main/resources/application.yaml
+      - welfare-ax-admin/src/main/resources/application-local.yaml
     sharedModules:
-      - src/main/java/com/beplepay/welfareaxbe/common/**
-      - src/main/java/com/beplepay/welfareaxbe/ceremony/**
+      - welfare-ax-domain/src/main/java/**
+      - welfare-ax-common/src/main/java/**
+
+  - id: batch
+    description: 배치 처리 (welfare-ax-batch)
+    allowedPaths:
+      - welfare-ax-batch/src/main/java/**
+      - welfare-ax-batch/src/test/java/**
+      - welfare-ax-batch/src/main/resources/application.yaml
+      - welfare-ax-batch/src/main/resources/application-local.yaml
+    sharedModules:
+      - welfare-ax-domain/src/main/java/**
+      - welfare-ax-common/src/main/java/**

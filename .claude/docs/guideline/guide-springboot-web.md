@@ -2,19 +2,34 @@
 
 복지AX-BE Spring Boot 4.1.0 기반 REST API 개발 가이드이다.
 
-## 패키지 구조
+## 패키지 구조 (멀티모듈)
 
+코드는 역할에 따라 모듈을 나눠 작성한다.
+
+**welfare-ax-domain** — Entity, Repository
 ```
-com.beplepay.welfareaxbe.{도메인}/
+com.beplepay.welfareaxbe.domain.{도메인}/
+├── entity/       @Entity, @Table
+└── repository/   JpaRepository<Entity, ID>
+```
+
+**welfare-ax-user** — Controller, Service, DTO
+```
+com.beplepay.welfareaxbe.user.{도메인}/
 ├── controller/   @RestController, @RequestMapping
 ├── service/      인터페이스 + Impl
-├── repository/   JpaRepository<Entity, ID>
-├── entity/       @Entity, @Table
 └── dto/          Request/Response (Lombok @Builder)
 ```
 
-**경조사 전용**: `ceremony/` 하위 패키지
-**복지 공통**: `member/`, `merchant/`, `common/` 패키지
+**welfare-ax-common** — 공통 인프라
+```
+com.beplepay.welfareaxbe.common/
+├── exception/    공통 예외, @RestControllerAdvice
+└── response/     ApiResponse<T> 래퍼
+```
+
+**경조사 전용**: `user/ceremony/`, `domain/ceremony/` 하위
+**복지 공통 도메인**: `domain/member/`, `domain/merchant/`
 
 ## Controller 작성 기준
 - `@RestController` + `@RequestMapping("/api/v1/{도메인}")`

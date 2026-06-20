@@ -12,18 +12,20 @@ haiku
 ## 탐색 관점
 
 ### 관점 1: 기능 유사성
-`src/main/java/com/beplepay/welfareaxbe` 에서 요청된 기능과 유사한 구현 탐색
-- Controller → Service → Repository 레이어 흐름 확인
-- 같은 도메인(ceremony, member, merchant, common 등)의 기존 구현 패턴 확인
+`welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user` 에서 요청된 기능과 유사한 구현 탐색
+- Controller → Service 레이어 흐름 확인
+- 같은 도메인(ceremony 등)의 기존 구현 패턴 확인
 
 ### 관점 2: 데이터 유사성
+`welfare-ax-domain/src/main/java/com/beplepay/welfareaxbe/domain` 에서 탐색
 - 관련 Entity 클래스와 JPA Repository 탐색
-- 유사한 DTO 패턴 확인
+- 유사한 DTO 패턴 확인 (DTO는 welfare-ax-user 모듈)
 
 ### 관점 3: 공통 기능
-- `common/` 패키지의 재사용 가능한 유틸·예외·응답 래퍼 확인
-- Spring Security 설정에서 권한 처리 패턴 확인
-- 공통 vs 경조사 전용 분리 기준 확인
+`welfare-ax-common/src/main/java/com/beplepay/welfareaxbe/common` 에서 탐색
+- 재사용 가능한 유틸·예외·응답 래퍼 확인
+- `welfare-ax-user/src/main/java/.../user/config`, `.../user/security` 에서 Security 설정·권한 처리 패턴 확인
+- 모듈 분리 기준 확인 (entity/repo → domain, controller/service → user, 공유 → common)
 
 ## 출력 형식
 ```markdown

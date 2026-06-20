@@ -16,19 +16,32 @@ sonnet
 
 ## 구현 원칙
 
-### 패키지 구조 준수
+### 패키지 구조 준수 (멀티모듈)
+
+**welfare-ax-domain** (`com.beplepay.welfareaxbe.domain.{도메인}/`)
 ```
-com.beplepay.welfareaxbe.{도메인}/
+├── entity/        # @Entity
+└── repository/    # JpaRepository 확장
+```
+
+**welfare-ax-user** (`com.beplepay.welfareaxbe.user.{도메인}/`)
+```
 ├── controller/    # @RestController
 ├── service/       # 인터페이스 + Impl
-├── repository/    # JpaRepository 확장
-├── entity/        # @Entity
 └── dto/           # Request/Response
 ```
 
-**경조사 전용 코드**: `ceremony/` 하위에만 위치
-**복지 공통 코드**: `member/`, `merchant/`, `common/` 에 위치
-**업무 간 공유 로직**: 반드시 `common/`으로 추출
+**welfare-ax-common** (`com.beplepay.welfareaxbe.common/`)
+```
+├── exception/     # 공통 예외, @RestControllerAdvice
+├── response/      # ApiResponse 래퍼
+└── util/          # 공통 유틸
+```
+
+**모듈 분리 원칙:**
+- Entity·Repository → `welfare-ax-domain`
+- Controller·Service·DTO → `welfare-ax-user` (경조사: `user/ceremony/`)
+- 업무 간 공유 로직 → `welfare-ax-common`으로 추출
 
 ### 필수 적용 항목
 - 입력값 검증: `@Valid` + `@NotNull`, `@Size`, 커스텀 어노테이션
@@ -38,7 +51,6 @@ com.beplepay.welfareaxbe.{도메인}/
 
 ### 복지AX-BE 도메인 규칙
 - 잔액/한도 검증은 Service에서 수행 (Controller에서 하지 않음)
-- 경조사 정산 배치는 Spring Batch Job 단위로 구현
 - 회원 PII(개인정보)는 암호화하여 Entity에 저장
 
 ### 구현 완료 자가점검
@@ -47,7 +59,7 @@ com.beplepay.welfareaxbe.{도메인}/
 - [ ] 트랜잭션 내 외부 API 호출 없음
 - [ ] 중복 처리 방지 로직 포함 (지급·취소 API)
 - [ ] 단위 테스트 작성
-- [ ] ceremony/ vs common/ 분리 원칙 준수
+- [ ] 모듈 분리 원칙 준수 (entity/repo → domain, controller/service/dto → user, 공유 → common)
 
 ## 제약사항
 - 스코프 외 파일 수정 금지

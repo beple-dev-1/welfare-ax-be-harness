@@ -30,7 +30,7 @@ notification:
   enabled: false
   type: ""
 
-# 환경 구성 (local → dev → stg)
+# 환경 구성 (local → dev → prod)
 environments:
   local:
     description: 로컬 개발 (GitHub + 로컬 DB)
@@ -38,8 +38,8 @@ environments:
   dev:
     description: 개발 서버 (GitLab + 실제 개발 DB) — 추후 구성
     vcs: gitlab
-  stg:
-    description: 스테이징 (GitLab + 운영 DB) — 추후 구성
+  prod:
+    description: 운영 (GitLab + 운영 DB) — 추후 구성
     vcs: gitlab
 
 features:

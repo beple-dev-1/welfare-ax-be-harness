@@ -21,35 +21,46 @@
 - DTO 응답: `*Response` 또는 `*Res` (예: `CeremonyApplyResponse`)
 - 예외: `*Exception` (예: `CeremonyNotFoundException`)
 
-### 패키지 구조 기준
+### 패키지 구조 기준 (멀티모듈)
 
+**welfare-ax-common** — 공통 인프라 라이브러리
 ```
-com.beplepay.welfareaxbe
-├── config/           # Spring 설정 클래스
-├── common/           # 공통 인프라 (모든 업무 공유)
-│   ├── exception/    # 공통 예외, 전역 핸들러
-│   ├── response/     # ApiResponse 래퍼
-│   └── util/         # 유틸리티
-├── security/         # Spring Security, JWT
-├── member/           # 회원 관리 — 복지 공통
-│   ├── controller/
-│   ├── service/
-│   ├── repository/
+com.beplepay.welfareaxbe.common
+├── exception/    # 공통 예외, @RestControllerAdvice
+├── response/     # ApiResponse 래퍼
+└── util/         # 유틸리티
+```
+
+**welfare-ax-domain** — 공통 도메인 라이브러리
+```
+com.beplepay.welfareaxbe.domain
+├── member/
+│   ├── entity/       # @Entity
+│   └── repository/   # JpaRepository
+├── merchant/
 │   ├── entity/
-│   └── dto/
-├── merchant/         # 가맹점 관리 — 복지 공통
-│   └── (동일 구조)
-└── ceremony/         # 경조사 전용 (현재 구현)
-    ├── application/  # 경조사 신청 처리
-    ├── approval/     # 승인 처리
-    ├── payment/      # 지급 처리
-    └── settlement/   # 정산 처리
+│   └── repository/
+└── ceremony/
+    ├── entity/
+    └── repository/
 ```
 
-**패키지 분리 규칙:**
-- `ceremony/` 하위 코드가 `member/`, `merchant/`를 직접 import할 수 있으나
-  다른 복지 업무 패키지(미래에 추가될)를 직접 참조하지 않는다.
-- 업무 간 공유가 필요한 코드는 반드시 `common/`으로 이동한다.
+**welfare-ax-user** — 사용자 API 실행 모듈
+```
+com.beplepay.welfareaxbe.user
+├── config/           # Security, Web 설정
+├── security/         # JWT 필터, 토큰 처리
+└── ceremony/
+    ├── application/  # 경조사 신청 (controller, service, dto)
+    ├── approval/     # 승인 처리
+    └── payment/      # 지급 처리
+```
+
+**모듈 분리 규칙:**
+- Entity·Repository → `welfare-ax-domain` 모듈에만 위치
+- Controller·Service·DTO → 각 실행 모듈(`welfare-ax-user` 등)에 위치
+- 실행 모듈은 `welfare-ax-domain`을 Gradle 의존으로 참조 (직접 패키지 import 아님)
+- 업무 간 공유가 필요한 코드는 반드시 `welfare-ax-common`으로 이동
 
 ## import 순서
 1. java.*

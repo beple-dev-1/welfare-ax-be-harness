@@ -16,7 +16,6 @@ fi
 BLOCKED_PATTERNS=(
   "application-prod"
   "application-production"
-  "application-staging"
   ".env"
   "credentials.json"
   ".pem"

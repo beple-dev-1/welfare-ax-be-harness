@@ -28,9 +28,11 @@ vcs:
 
 # 하네스 레포 — .claude/, CLAUDE.md 를 별도 레포에서 관리
 # GitLab 전환 시 current를 gitlab으로 변경하고 gitlab 항목의 값을 채운다
+# 브랜치 전략: 소스 레포와 동일하게 feature 브랜치 → PR → main 머지
 harness:
   current: github
   localPath: ../welfare-ax-be-harness
+  branchStrategy: feature-pr   # main 직접 커밋 금지, feature/{설명}/gkwns458 브랜치 사용
   github:
     remote: https://github.com/beple-dev-1/welfare-ax-be-harness.git
   gitlab:

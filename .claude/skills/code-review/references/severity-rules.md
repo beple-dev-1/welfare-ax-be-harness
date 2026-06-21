@@ -9,8 +9,10 @@
 
 ### 보안
 - PII(개인정보) 로그 노출 (`log.info("회원명: {}", member.getName())`)
+- 코드·설정·Swagger 메타정보에 개인 이메일·연락처 하드코딩
 - 인증 없이 접근 가능한 보호 API 엔드포인트
 - 시크릿/비밀번호 하드코딩
+- 운영 환경 Swagger UI 노출 (`springdoc.swagger-ui.enabled` 기본값 미설정)
 
 ### 아키텍처
 - @Transactional 메서드 내 외부 REST API 호출

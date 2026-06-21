@@ -1,7 +1,7 @@
 workspaceName: welfare-ax-be
 outputDir: target
 basePackagePattern: com.beplepay.welfareaxbe
-commonUtilsArtifact: ""
+commonUtilsArtifact: "welfare-ax-common"
 tracing:
   mdcKey: traceId
 
@@ -47,7 +47,7 @@ projects:
 
   - name: welfare-ax-common
     shortName: common
-    description: 공통 인프라 (예외, 응답 래퍼, 유틸)
+    description: 공통 인프라 (예외, 응답 래퍼, HTTP 클라이언트, 분산 추적, 유틸)
     dir: welfare-ax-common
     buildTool: gradle
     outputDir: target

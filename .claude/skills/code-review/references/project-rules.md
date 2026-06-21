@@ -36,3 +36,20 @@
 - 응답 래퍼: 프로젝트 공통 `ApiResponse<T>` 사용
 - 예외: 커스텀 예외 클래스 + `@RestControllerAdvice`
 - 공통 기능 중복 구현 금지
+
+### MDC traceId 키
+- `MDC.get/put/remove` 호출 시 문자열 리터럴(`"traceId"`) 직접 사용 금지
+- 반드시 `MdcConstants.TRACE_ID_KEY` 상수 참조
+- 위반 시 WARNING
+
+### 외부 HTTP 호출
+- `CommonHttpClient` 경유 필수. `RestClient`, `RestTemplate` 직접 사용 금지
+- 트랜잭션 내 외부 호출 금지 (CRITICAL)
+
+## Swagger UI 보안
+
+### 운영 환경 노출 방지
+- `application.yaml` (기본): `springdoc.swagger-ui.enabled: false` 확인 필수
+- SecurityConfig `permitAll` 추가만으로는 부족 — `enabled: false` 기본값과 병행 필수
+- 새 실행 모듈(admin 등)에 Swagger 설정 추가 시 동일 패턴 적용 확인
+- 위반 시 CRITICAL (운영 Swagger 노출은 API 구조 및 JWT 인증 방식 노출로 이어짐)

@@ -10,8 +10,6 @@ Read, Glob, Grep, Edit, Write, Bash, DB(메타 참조용)
 sonnet
 
 ## 참조 문서
-- `.claude/docs/agents/dev-backend/references/input-validation-check.md`
-- `.claude/docs/agents/dev-backend/references/query-quality-check.md`
 - `.claude/docs/guideline/guide-springboot-web.md`
 
 ## 구현 원칙
@@ -33,15 +31,28 @@ sonnet
 
 **welfare-ax-common** (`com.beplepay.welfareaxbe.common/`)
 ```
-├── exception/     # 공통 예외, @RestControllerAdvice
-├── response/      # ApiResponse 래퍼
-└── util/          # 공통 유틸
+├── exception/     # ErrorCode, WelfareException, GlobalExceptionHandler
+├── filter/        # TraceIdFilter — traceId MDC 저장·전파
+├── http/          # CommonHttpClient, HttpLoggingInterceptor
+├── response/      # ApiResponse<T> 래퍼
+└── util/          # MdcConstants (MDC 키 상수)
 ```
 
 **모듈 분리 원칙:**
 - Entity·Repository → `welfare-ax-domain`
 - Controller·Service·DTO → `welfare-ax-user` (경조사: `user/ceremony/`)
 - 업무 간 공유 로직 → `welfare-ax-common`으로 추출
+
+### 공통 인프라 사용 원칙
+
+**외부 HTTP 호출**: `CommonHttpClient` 경유 필수. `RestTemplate`, `RestClient` 직접 사용 금지.
+
+**MDC traceId 키**: `MdcConstants.TRACE_ID_KEY` 상수 사용. 리터럴 `"traceId"` 하드코딩 금지.
+
+**응답 래퍼**: 모든 API 응답은 `ApiResponse<T>` 사용. 직접 객체 반환 금지.
+
+**예외**: 도메인 예외는 `WelfareException(ErrorCode.xxx)` 또는 커스텀 Exception 사용.
+GlobalExceptionHandler가 자동으로 ApiResponse 오류 응답으로 변환한다.
 
 ### 필수 적용 항목
 - 입력값 검증: `@Valid` + `@NotNull`, `@Size`, 커스텀 어노테이션
@@ -60,6 +71,8 @@ sonnet
 - [ ] 중복 처리 방지 로직 포함 (지급·취소 API)
 - [ ] 단위 테스트 작성
 - [ ] 모듈 분리 원칙 준수 (entity/repo → domain, controller/service/dto → user, 공유 → common)
+- [ ] `MDC.get/put/remove` 사용 시 `MdcConstants.TRACE_ID_KEY` 상수 참조 확인
+- [ ] 외부 HTTP 호출 시 `CommonHttpClient` 경유 확인
 
 ## 제약사항
 - 스코프 외 파일 수정 금지

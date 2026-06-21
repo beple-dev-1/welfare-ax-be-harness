@@ -4,43 +4,63 @@
 > 진행 중인 작업의 상태를 다음 세션에서 이어받을 수 있도록 기록합니다.
 
 ## 진행 중인 작업
-없음 — 멀티모듈 구조 전환 및 하네스 정합성 점검 완료
+없음 — COMMON-00004 완료, PR #5 main 머지 완료 (머지 커밋: `8ed6350`)
 
 ## 최근 작업 요약
 
-### 멀티모듈 구조 전환
-- 단일 모듈 → 5개 멀티모듈 구조로 전환
-  - `welfare-ax-common` — 공통 인프라 라이브러리
-  - `welfare-ax-domain` — 공통 도메인 라이브러리 (Entity, Repository)
-  - `welfare-ax-user` — 사용자 API 실행 모듈 (port: 8080)
-  - `welfare-ax-admin` — 관리자 API skeleton (port: 8081)
-  - `welfare-ax-batch` — 배치 실행 모듈 skeleton (port: 8082, ax-be에서 배치 없음)
-- 각 실행 모듈 `@SpringBootApplication(scanBasePackages = "com.beplepay.welfareaxbe")` 적용
-- `@EnableJpaRepositories("com.beplepay.welfareaxbe")` — welfare-ax-user에만 적용
+### COMMON-00004: traceId 상수화 및 Swagger(OpenAPI 3.0) 연계 (커밋 완료)
+브랜치: `feature/COMMON-00004/gkwns458`
+커밋: `aa4088a`
 
-### 환경 설정
-- 로컬 DB 접속정보 적용: `jdbc:postgresql://localhost:5432/welfare` (welfare/welfare1234)
-- MCP postgres 연결 설정 완료 (`.mcp.json`)
-- 환경 프로파일: local → dev → prod (stg 없음)
-- Spring Batch 의존성 전면 제거 (ax-be에서 배치 없음, 별도 모듈 예정)
+**구현 내용**
 
-### 하네스 정합성 점검 (완료)
-- `settings.json` — `application-dev*` 차단 제거 (security-policy.md와 일치)
-- `check-file-access.sh` — `application-staging` 제거, prod만 차단
-- `testing.md` — "정산 배치" DoD 항목 제거
-- `qa-tester.md` — 테스트 명령 멀티모듈 형식으로 수정
-- `convention.md`, `dev-guide.md`, `dev-backend.md` — 멀티모듈 패키지 구조 반영
-- `scope.yaml` — 6개 스코프 모두 모듈별 경로로 업데이트
-- `system.yaml` — stg → prod 환경 변경
+- `welfare-ax-common`
+  - `MdcConstants` 신규 추가 — `TRACE_ID_KEY = "traceId"` 단일 상수로 중앙화
+    TraceIdFilter, HttpLoggingInterceptor에 분산된 리터럴을 모두 상수 참조로 변경
+  - `TraceIdFilter` — 패키지 전용 `TRACE_ID_KEY` 제거, `MdcConstants.TRACE_ID_KEY` 참조
+  - `HttpLoggingInterceptor` — `MDC.get("traceId")` → `MDC.get(MdcConstants.TRACE_ID_KEY)`
+  - 관련 테스트(`TraceIdFilterTest`, `HttpLoggingInterceptorTest`, `MdcConstantsTest`) 갱신
+
+- `welfare-ax-user`
+  - `springdoc-openapi-starter-webmvc-ui:2.8.9` 의존성 추가 (`build.gradle.kts`)
+  - `SwaggerConfig` 신규 추가 — JWT BearerAuth SecurityScheme 전역 등록, Authorize 버튼 사전 구성
+  - `SecurityConfig` — `/swagger-ui/**`, `/v3/api-docs/**` permitAll 추가 (이중 차단 주석 포함)
+  - `application.yaml` — `dev` 프로파일 그룹 추가, springdoc 기본 비활성화
+  - `application-local.yaml`, `application-dev.yaml` — springdoc 활성화 설정 추가
+  - `logback-spring.xml` — MdcConstants 키 동기화 주의사항 주석 추가
+  - `SwaggerConfigTest` 신규 추가 — 순수 단위 테스트 (메타정보, BearerAuth, 전역 Security)
+
+**코드 리뷰 지적사항 수정**
+- CRITICAL: SwaggerConfig 개인 이메일 → `support@beple.co.kr` 교체
+- WARNING: `HttpLoggingInterceptorTest` import 순서 정정 (org.springframework.* 뒤로 이동)
+- INFO: `SwaggerConfig` import 순서 정정 (org.springframework.* → io.swagger.* 순서)
+
+**테스트**: `welfare-ax-common` 전체 통과, `SwaggerConfigTest` 3건 통과
+(TestApiClientIntegrationTest 4건 실패는 httpbin.org 503 기존 이슈 — COMMON-00004 무관)
 
 ## Git 커밋 현황
-- `welfare-ax-be` (소스): `a8e6f63` — refactor: 단일 모듈 → 5개 멀티모듈 구조로 전환 (origin/main 동기화 완료)
-- `welfare-ax-be-harness` (하네스): `ced3663` — refactor: 멀티모듈 구조 전환 및 환경 설정 변경 반영 (origin/main 동기화 완료)
+| 커밋 | 내용 |
+|------|------|
+| `aa4088a` | feat: traceId 상수화 및 Swagger 연계 (COMMON-00004) |
+| `b9fa63b` | Merge PR #4 (COMMON-00003) → main |
+| `69c487b` | feat: traceId 인프라 구현 (COMMON-00003) |
+| `4149b15` | Merge PR #3 (COMMON-00002 추가 작업) → main |
+| `701940e` | Merge PR #2 (COMMON-00002) → main |
 
 ## 다음 단계
-1. `/dev-interview`로 첫 번째 기능 개발 시작 (경조사 신청 API)
-2. 첫 Entity 추가 시 `welfare-ax-domain` 엔티티가 `welfare-ax-user`에서 자동 스캔되는지 확인 필요
+1. **TestApiClientIntegrationTest 대응**: httpbin.org 대신 WireMock으로 목킹하거나 `build.gradle.kts`에서 `integration` 태그 기본 제외 처리 (별도 과업)
+3. **로그인 API 과업 시작**: `Member` 도메인 Entity/Repository 구현 → 인증 API (`/dev-interview member`)
+4. **경조사 신청 API 과업 시작**: `/dev-interview ceremony`
+5. (선택) `admin`, `batch` 모듈에 `logback-spring.xml` 동일 설정 추가 — 현재 skeleton 상태
 
 ## 미결 사항
-- GitLab 연동 정보 미설정 (`system.yaml`의 gitlab.baseUrl, projectMappings)
-- 첫 Entity 추가 전 `@EntityScan` 대안 확인 (Spring Boot 4.x에서 패키지 이동됨)
+- `TestApiClientIntegrationTest`: httpbin.org 503 실패 (기존 이슈, COMMON-00002 때부터)
+  → WireMock 도입 또는 `-Dgroups=!integration` 빌드 제외 처리 검토
+- Member Entity/Repository `welfare-ax-domain` 미구현 (로그인 API 사전 조건)
+- `TraceIdFilter` 비동기 환경(`@Async`, `DeferredResult`) MDC 미전파 — `MDCTaskDecorator` 향후 검토
+- `gh` CLI PATH 미등록 — `setx PATH "%PATH%;C:\Program Files\GitHub CLI"` 실행 필요
+
+## 보안 자가점검
+- [x] 운영 설정 파일 변경 없음
+- [x] 시크릿 정보 코드 포함 없음
+- [x] 개인정보 로그 노출 없음 (리뷰에서 이메일 하드코딩 적발·수정 완료)

@@ -42,14 +42,21 @@ scopes:
       - welfare-ax-common/src/main/java/**
 
   - id: common
-    description: 공통 인프라 (예외, 응답 래퍼, 유틸, 보안, 설정)
+    description: 공통 인프라 (예외, 응답 래퍼, 유틸, 보안, HTTP 클라이언트, 분산 추적, 설정)
     allowedPaths:
       - welfare-ax-common/src/main/java/**
       - welfare-ax-common/src/test/java/**
       - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/config/**
       - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/security/**
+      - welfare-ax-user/src/main/java/com/beplepay/welfareaxbe/user/client/**
+      - welfare-ax-user/src/test/java/com/beplepay/welfareaxbe/user/config/**
+      - welfare-ax-user/src/test/java/com/beplepay/welfareaxbe/user/security/**
+      - welfare-ax-user/src/test/java/com/beplepay/welfareaxbe/user/client/**
       - welfare-ax-user/src/main/resources/application.yaml
       - welfare-ax-user/src/main/resources/application-local.yaml
+      - welfare-ax-user/src/main/resources/application-dev.yaml
+      - welfare-ax-user/src/main/resources/application-api.yaml
+      - welfare-ax-user/src/main/resources/logback-spring.xml
     sharedModules: []
 
   - id: admin

@@ -16,7 +16,7 @@
 
 ### 2단계: 병렬 선탐색 (3개 에이전트 동시 실행)
 다음 3개 에이전트를 동시에 실행하여 기존 코드와 DB 구조를 파악한다:
-- **code-investigator**: `src/main/java/com/beplepay/welfareaxbe` 기준 유사 구현 탐색
+- **code-investigator**: `src/main/java/com/beplepay/weadk/welfare` 기준 유사 구현 탐색
 - **db-meta-manager**: PostgreSQL에서 관련 테이블·컬럼·인덱스 메타 수집
 - **security-auditor**: 보안 관련 코드(인증, 암호화, PII 처리) 탐색
 

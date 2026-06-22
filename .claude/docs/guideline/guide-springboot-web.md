@@ -6,24 +6,24 @@
 
 코드는 역할에 따라 모듈을 나눠 작성한다.
 
-**welfare-ax-domain** — Entity, Repository
+**we-adk-welfare-domain** — Entity, Repository
 ```
-com.beplepay.welfareaxbe.domain.{도메인}/
+com.beplepay.weadk.welfare.domain.{도메인}/
 ├── entity/       @Entity, @Table
 └── repository/   JpaRepository<Entity, ID>
 ```
 
-**welfare-ax-user** — Controller, Service, DTO
+**we-adk-welfare-user** — Controller, Service, DTO
 ```
-com.beplepay.welfareaxbe.user.{도메인}/
+com.beplepay.weadk.welfare.user.{도메인}/
 ├── controller/   @RestController, @RequestMapping
 ├── service/      인터페이스 + Impl
 └── dto/          Request/Response (Lombok @Builder)
 ```
 
-**welfare-ax-common** — 공통 인프라 (새 공통 기능은 반드시 여기에 작성)
+**we-adk-welfare-common** — 공통 인프라 (새 공통 기능은 반드시 여기에 작성)
 ```
-com.beplepay.welfareaxbe.common/
+com.beplepay.weadk.welfare.common/
 ├── exception/    ErrorCode, WelfareException, GlobalExceptionHandler(@RestControllerAdvice)
 ├── filter/       TraceIdFilter — 모든 요청에 UUID traceId 부여, MDC 저장, X-Trace-Id 헤더 반환
 ├── http/         CommonHttpClient(RestClient 래퍼), HttpLoggingInterceptor(요청·응답 자동 로깅)

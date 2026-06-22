@@ -1,5 +1,5 @@
-systemName: 복지AX-BE
-basePackage: com.beplepay.welfareaxbe
+systemName: we-adk-welfare
+basePackage: com.beplepay.weadk.welfare
 
 db:
   vendor: postgresql
@@ -31,10 +31,10 @@ vcs:
 # 브랜치 전략: 소스 레포와 동일하게 feature 브랜치 → PR → main 머지
 harness:
   current: github
-  localPath: ../welfare-ax-be-harness
+  localPath: ../we-adk-welfare-harness
   branchStrategy: feature-pr   # main 직접 커밋 금지, feature/{설명}/gkwns458 브랜치 사용
   github:
-    remote: https://github.com/beple-dev-1/welfare-ax-be-harness.git
+    remote: https://github.com/beple-dev-1/we-adk-welfare-harness.git
   gitlab:
     remote: ""            # GitLab 전환 시 설정
 

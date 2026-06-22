@@ -7,17 +7,17 @@
 
 | 모듈 | 패키지 루트 | 설명 |
 |------|-----------|------|
-| `welfare-ax-common` | `com.beplepay.welfareaxbe.common` | 모든 모듈에서 사용하는 공통 인프라 (라이브러리) |
-| `welfare-ax-domain` | `com.beplepay.welfareaxbe.domain` | Entity·Repository — 모든 실행 모듈이 의존 (라이브러리) |
-| `welfare-ax-user` | `com.beplepay.welfareaxbe.user` | 사용자 API — 경조사 신청·승인·지급 (실행 모듈) |
-| `welfare-ax-admin` | `com.beplepay.welfareaxbe.admin` | 관리자 API (실행 모듈, skeleton) |
-| `welfare-ax-batch` | `com.beplepay.welfareaxbe.batch` | 배치 처리 (실행 모듈, skeleton, 별도 개발) |
+| `we-adk-welfare-common` | `com.beplepay.weadk.welfare.common` | 모든 모듈에서 사용하는 공통 인프라 (라이브러리) |
+| `we-adk-welfare-domain` | `com.beplepay.weadk.welfare.domain` | Entity·Repository — 모든 실행 모듈이 의존 (라이브러리) |
+| `we-adk-welfare-user` | `com.beplepay.weadk.welfare.user` | 사용자 API — 경조사 신청·승인·지급 (실행 모듈) |
+| `we-adk-welfare-admin` | `com.beplepay.weadk.welfare.admin` | 관리자 API (실행 모듈, skeleton) |
+| `we-adk-welfare-batch` | `com.beplepay.weadk.welfare.batch` | 배치 처리 (실행 모듈, skeleton, 별도 개발) |
 
-새로운 복지 업무 추가 시: 새 실행 모듈(예: `welfare-ax-housing`)을 추가하고 `welfare-ax-common`, `welfare-ax-domain`의 공통 기능을 활용한다.
+새로운 복지 업무 추가 시: 새 실행 모듈(예: `welfare-ax-housing`)을 추가하고 `we-adk-welfare-common`, `we-adk-welfare-domain`의 공통 기능을 활용한다.
 
 ## 새 구현 전 확인 사항
 
-1. `welfare-ax-common` 모듈에 공통 기능이 이미 있는지 확인한다.
+1. `we-adk-welfare-common` 모듈에 공통 기능이 이미 있는지 확인한다.
 2. 신규 코드가 domain(entity/repo), user(controller/service/dto), common(공통 인프라) 중 어디에 속하는지 먼저 판단한다.
 3. 프로젝트 유형에 맞는 가이드 문서를 먼저 읽는다.
 4. 기존 유사 구현이 있으면 패턴을 맞춘다 — code-investigator 에이전트 활용.

@@ -23,17 +23,17 @@
 
 ### 패키지 구조 기준 (멀티모듈)
 
-**welfare-ax-common** — 공통 인프라 라이브러리
+**we-adk-welfare-common** — 공통 인프라 라이브러리
 ```
-com.beplepay.welfareaxbe.common
+com.beplepay.weadk.welfare.common
 ├── exception/    # 공통 예외, @RestControllerAdvice
 ├── response/     # ApiResponse 래퍼
 └── util/         # 유틸리티
 ```
 
-**welfare-ax-domain** — 공통 도메인 라이브러리
+**we-adk-welfare-domain** — 공통 도메인 라이브러리
 ```
-com.beplepay.welfareaxbe.domain
+com.beplepay.weadk.welfare.domain
 ├── member/
 │   ├── entity/       # @Entity
 │   └── repository/   # JpaRepository
@@ -45,9 +45,9 @@ com.beplepay.welfareaxbe.domain
     └── repository/
 ```
 
-**welfare-ax-user** — 사용자 API 실행 모듈
+**we-adk-welfare-user** — 사용자 API 실행 모듈
 ```
-com.beplepay.welfareaxbe.user
+com.beplepay.weadk.welfare.user
 ├── config/           # Security, Web 설정
 ├── security/         # JWT 필터, 토큰 처리
 └── ceremony/
@@ -57,10 +57,10 @@ com.beplepay.welfareaxbe.user
 ```
 
 **모듈 분리 규칙:**
-- Entity·Repository → `welfare-ax-domain` 모듈에만 위치
-- Controller·Service·DTO → 각 실행 모듈(`welfare-ax-user` 등)에 위치
-- 실행 모듈은 `welfare-ax-domain`을 Gradle 의존으로 참조 (직접 패키지 import 아님)
-- 업무 간 공유가 필요한 코드는 반드시 `welfare-ax-common`으로 이동
+- Entity·Repository → `we-adk-welfare-domain` 모듈에만 위치
+- Controller·Service·DTO → 각 실행 모듈(`we-adk-welfare-user` 등)에 위치
+- 실행 모듈은 `we-adk-welfare-domain`을 Gradle 의존으로 참조 (직접 패키지 import 아님)
+- 업무 간 공유가 필요한 코드는 반드시 `we-adk-welfare-common`으로 이동
 
 ## import 순서
 1. java.*
@@ -72,9 +72,44 @@ com.beplepay.welfareaxbe.user
 (각 그룹 사이 빈 줄)
 
 ## 주석
-- 모든 주석은 한국어로 작성한다.
-- WHY가 명확한 경우에만 주석을 달고, WHAT 설명 주석은 작성하지 않는다.
-- Javadoc은 public API에만 작성하고 간결하게 유지한다.
+
+### 기본 원칙
+- 모든 주석과 Javadoc은 한국어로 작성한다.
+
+### Javadoc (클래스·메서드)
+- **모든 클래스**에 클래스 역할을 설명하는 Javadoc을 작성한다.
+- **모든 public·protected 메서드**에 Javadoc을 작성한다.
+- private 메서드도 로직이 복잡하면 Javadoc을 작성한다.
+- Javadoc 필수 태그:
+  - `@param` — 각 파라미터의 의미와 허용 범위
+  - `@return` — 반환값의 의미 (void 제외)
+  - `@throws` — 발생 가능한 예외와 발생 조건
+
+```java
+/**
+ * JWT 액세스 토큰을 생성한다.
+ *
+ * @param memberId 회원 식별자
+ * @param role     권한 (예: USER, ADMIN)
+ * @return 서명된 JWT 문자열
+ */
+public String generateToken(Long memberId, String role) { ... }
+```
+
+### 인라인 주석
+- 메서드 내부의 **주요 처리 단계**마다 한 줄 주석으로 흐름을 설명한다.
+- 조건 분기·예외 처리에는 해당 분기의 의미를 주석으로 명시한다.
+- 비즈니스 규칙, 제약 조건, 주의사항은 WHY까지 함께 기록한다.
+
+```java
+// Bearer 접두사 제거 후 순수 토큰 추출
+String token = header.substring(7);
+
+// 만료·변조·형식 오류 모두 false로 통일 처리 (상세 원인은 로그로만 기록)
+} catch (JwtException e) {
+    return false;
+}
+```
 
 ## Lombok 사용 기준
 - Entity: `@Getter`, `@NoArgsConstructor(access = PROTECTED)` 기본

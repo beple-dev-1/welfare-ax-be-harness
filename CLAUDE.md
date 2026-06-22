@@ -6,7 +6,7 @@
 
 ## 워크스페이스 개요
 
-**복지AX-BE(welfare-ax-be)** 는 비플페이(beplepay)가 개발 중인 복지혜택 관리 플랫폼 백엔드입니다.
+**we-adk-welfare** 는 비플페이(beplepay)가 개발 중인 복지혜택 관리 플랫폼입니다.
 첫 번째 업무 도메인: **경조사지원** (결혼·출산·장례 등 경조사 이벤트에 대한 복지 지원)
 향후 동일 프로젝트에 다른 성격의 복지 업무가 추가되므로, **공통 레이어**와 **경조사 전용 레이어**를 분리하여 관리한다.
 
@@ -17,6 +17,8 @@
 | 언어 | Java 21 |
 | 프레임워크 | Spring Boot 4.1.0 (Jakarta EE 10 기반) |
 | Web | Spring MVC (`spring-boot-starter-webmvc`) |
+| View | Thymeleaf (`spring-boot-starter-thymeleaf`) |
+| 프론트엔드 | JS (IIFE 모듈 패턴), CSS |
 | 보안 | Spring Security 6.x (`spring-boot-starter-security`) |
 | 인증 | JWT (`io.jsonwebtoken:jjwt 0.12.6`) |
 | ORM | Spring Data JPA 3.x / Hibernate 6 |
@@ -27,54 +29,57 @@
 ## 모듈 구조
 
 ```
-welfare-ax-be/                      ← 루트 (오케스트레이션만, src 없음)
-├── welfare-ax-common/              ← 공통 인프라 라이브러리
-│   └── com.beplepay.welfareaxbe.common
+we-adk-welfare/                         ← 루트 (오케스트레이션만, src 없음)
+├── we-adk-welfare-common/              ← 공통 인프라 라이브러리
+│   └── com.beplepay.weadk.welfare.common
 │       ├── exception/              (공통 예외, GlobalExceptionHandler)
 │       ├── response/               (ApiResponse 래퍼)
 │       └── util/
-├── welfare-ax-domain/              ← 공통 도메인 라이브러리 (Entity, Repository)
-│   └── com.beplepay.welfareaxbe.domain
+├── we-adk-welfare-domain/              ← 공통 도메인 라이브러리 (Entity, Repository)
+│   └── com.beplepay.weadk.welfare.domain
 │       ├── member/                 (회원 Entity, Repository)
 │       ├── merchant/               (가맹점 Entity, Repository)
 │       └── ceremony/               (경조사 Entity, Repository)
-├── welfare-ax-user/                ← 사용자 API 실행 모듈 (port: 8080)
-│   └── com.beplepay.welfareaxbe.user
+├── we-adk-welfare-user/                ← 사용자 API 실행 모듈 (port: 8080)
+│   └── com.beplepay.weadk.welfare.user
 │       ├── config/                 (Security, Web 설정)
 │       ├── security/               (JWT 필터, 토큰 처리)
 │       └── ceremony/
 │           ├── application/        (경조사 신청)
 │           ├── approval/           (승인 처리)
 │           └── payment/            (지급 처리)
-├── welfare-ax-admin/               ← 관리자 API 실행 모듈 (port: 8081, skeleton)
-│   └── com.beplepay.welfareaxbe.admin
-└── welfare-ax-batch/               ← 배치 실행 모듈 (port: 8082, skeleton)
-    └── com.beplepay.welfareaxbe.batch
+│   └── resources/
+│       ├── templates/              (Thymeleaf 템플릿)
+│       └── static/                 (JS, CSS 정적 파일)
+├── we-adk-welfare-admin/               ← 관리자 API 실행 모듈 (port: 8081, skeleton)
+│   └── com.beplepay.weadk.welfare.admin
+└── we-adk-welfare-batch/               ← 배치 실행 모듈 (port: 8082, skeleton)
+    └── com.beplepay.weadk.welfare.batch
 ```
 
 **모듈 의존 관계:**
 ```
-welfare-ax-user  ──┐
-welfare-ax-admin ──┼──→ welfare-ax-domain ──→ welfare-ax-common
-welfare-ax-batch ──┘
+we-adk-welfare-user  ──┐
+we-adk-welfare-admin ──┼──→ we-adk-welfare-domain ──→ we-adk-welfare-common
+we-adk-welfare-batch ──┘
 ```
 
 **분리 원칙:**
-- `welfare-ax-common`, `welfare-ax-domain` → 모든 실행 모듈에서 재사용하는 라이브러리 (bootJar 없음)
-- `welfare-ax-user/admin/batch` → 각각 독립 실행 가능한 bootJar 생성
-- 각 실행 모듈은 `scanBasePackages = "com.beplepay.welfareaxbe"`로 모든 하위 패키지 스캔
+- `we-adk-welfare-common`, `we-adk-welfare-domain` → 모든 실행 모듈에서 재사용하는 라이브러리 (bootJar 없음)
+- `we-adk-welfare-user/admin/batch` → 각각 독립 실행 가능한 bootJar 생성
+- 각 실행 모듈은 `scanBasePackages = "com.beplepay.weadk.welfare"`로 모든 하위 패키지 스캔
 
 ## 빌드·실행 명령
 
 ```bash
-./gradlew build                                    # 전체 빌드
-./gradlew :welfare-ax-user:bootRun                 # 사용자 API 실행 (port 8080)
-./gradlew :welfare-ax-admin:bootRun                # 관리자 API 실행 (port 8081)
-./gradlew :welfare-ax-batch:bootRun                # 배치 실행 (port 8082)
-./gradlew test                                     # 전체 테스트
-./gradlew :welfare-ax-user:test                    # 특정 모듈 테스트
-./gradlew :welfare-ax-user:test --tests "*.SomeTest"   # 특정 클래스
-./gradlew clean build                              # 클린 빌드
+./gradlew build                                          # 전체 빌드
+./gradlew :we-adk-welfare-user:bootRun                   # 사용자 API 실행 (port 8080)
+./gradlew :we-adk-welfare-admin:bootRun                  # 관리자 API 실행 (port 8081)
+./gradlew :we-adk-welfare-batch:bootRun                  # 배치 실행 (port 8082)
+./gradlew test                                           # 전체 테스트
+./gradlew :we-adk-welfare-user:test                      # 특정 모듈 테스트
+./gradlew :we-adk-welfare-user:test --tests "*.SomeTest" # 특정 클래스
+./gradlew clean build                                    # 클린 빌드
 ```
 
 Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.

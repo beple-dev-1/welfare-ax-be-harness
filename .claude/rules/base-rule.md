@@ -17,13 +17,32 @@
 - 개발 브리프: `target/works/{과업번호}_dev_brief.md`
 - 개발·테스트 계획서: `target/plans/{과업번호}/`
 - 테스트 결과서: `target/test-reports/{과업번호}_test_result.md`
-- 세션 인수인계: `HANDOFF.md`, `HANDOFF_HISTORY.md`
+- 세션 인수인계: `HANDOFF.md`, `HANDOFF_HISTORY.md` *(로컬 전용 — 어느 레포에도 올라가지 않음)*
 
 ### target/ 관리 원칙
-- `target/`은 git으로 추적한다 (소스 레포 `.gitignore` 제외 대상 아님).
-- 각 개발자는 자신의 feature 브랜치에서만 `target/` 문서를 생성·수정한다.
-- 타 개발자의 feature 브랜치 `target/` 문서를 수정하지 않는다.
-- PR 머지 시 코드와 산출물(브리프·계획서·테스트 결과서)이 함께 main에 반영된다.
+- `target/`은 git으로 추적하지 않는다 (소스 레포 `.gitignore` 제외 대상).
+- 개발 산출물(브리프·계획서·테스트 결과서)은 개발자 로컬 환경에서만 관리한다.
+- 개발자마다 로컬 환경이 다를 수 있으며 원격 레포에 올라가지 않는다.
+
+### HANDOFF 관리 원칙
+- `HANDOFF.md`, `HANDOFF_HISTORY.md`는 로컬 전용이다.
+- 소스 레포와 하네스 레포 어느 쪽에도 커밋하지 않는다.
+- 세션 인수인계는 개발자 로컬 환경마다 독립적으로 관리된다.
+
+## 하네스 설정 파일 수정 원칙
+
+다음 파일을 수정할 때는 **사용자가 명령으로 직접 지시한 경우라도** 수정 내용을 먼저 설명하고 최종 확인을 받은 후에 진행한다:
+
+- `.claude/` 하위 모든 파일 (rules, skills, hooks, config, settings.json, SKILL.md 등)
+- `CLAUDE.md`
+- `.gitignore`
+
+수정 전 반드시 다음을 제시한다:
+1. 어떤 파일을 수정하는지
+2. 변경 전/후 핵심 차이 (diff 수준)
+3. 변경이 미치는 영향
+
+> 이 규칙은 하네스·설정의 무결성을 보호하기 위한 안전장치이므로 예외 없이 적용한다.
 
 ## AI 작업 책임
 

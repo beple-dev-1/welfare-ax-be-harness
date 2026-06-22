@@ -92,7 +92,7 @@ Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
 | 개발 계획서 | `target/plans/{과업번호}/` |
 | 페이즈 문서 | `target/plans/{과업번호}/phases/` |
 | 테스트 결과서 | `target/test-reports/{과업번호}_test_result.md` |
-| 세션 인수인계 | `HANDOFF.md` (진행 중), `HANDOFF_HISTORY.md` (완료 이력) |
+| 세션 인수인계 | `HANDOFF.md` (진행 중), `HANDOFF_HISTORY.md` (완료 이력) — **로컬 전용** |
 
 ## 설정 데이터 참조
 

@@ -1,7 +1,7 @@
-workspaceName: welfare-ax-be
+workspaceName: we-adk-welfare
 outputDir: target
-basePackagePattern: com.beplepay.welfareaxbe
-commonUtilsArtifact: "welfare-ax-common"
+basePackagePattern: com.beplepay.weadk.welfare
+commonUtilsArtifact: "we-adk-welfare-common"
 tracing:
   mdcKey: traceId
 
@@ -9,45 +9,47 @@ db:
   vendor: postgresql
 
 projects:
-  - name: welfare-ax-user
+  - name: we-adk-welfare-user
     shortName: user
     description: 사용자 API (경조사 신청·승인·지급·정산)
-    dir: welfare-ax-user
+    dir: we-adk-welfare-user
     buildTool: gradle
     guideline: guide-springboot-web
     conditionalGuides:
       - condition: jpa
         guide: guide-jpa
+      - condition: thymeleaf
+        guide: guide-frontend
     outputDir: target
 
-  - name: welfare-ax-admin
+  - name: we-adk-welfare-admin
     shortName: admin
     description: 관리자 API (skeleton)
-    dir: welfare-ax-admin
+    dir: we-adk-welfare-admin
     buildTool: gradle
     guideline: guide-springboot-web
     outputDir: target
 
-  - name: welfare-ax-batch
+  - name: we-adk-welfare-batch
     shortName: batch
     description: 배치 처리 (skeleton)
-    dir: welfare-ax-batch
+    dir: we-adk-welfare-batch
     buildTool: gradle
     outputDir: target
 
-  - name: welfare-ax-domain
+  - name: we-adk-welfare-domain
     shortName: domain
     description: 공통 도메인 (Entity, Repository)
-    dir: welfare-ax-domain
+    dir: we-adk-welfare-domain
     buildTool: gradle
     conditionalGuides:
       - condition: jpa
         guide: guide-jpa
     outputDir: target
 
-  - name: welfare-ax-common
+  - name: we-adk-welfare-common
     shortName: common
     description: 공통 인프라 (예외, 응답 래퍼, HTTP 클라이언트, 분산 추적, 유틸)
-    dir: welfare-ax-common
+    dir: we-adk-welfare-common
     buildTool: gradle
     outputDir: target

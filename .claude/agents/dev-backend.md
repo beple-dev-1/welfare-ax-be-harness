@@ -16,20 +16,20 @@ sonnet
 
 ### 패키지 구조 준수 (멀티모듈)
 
-**welfare-ax-domain** (`com.beplepay.welfareaxbe.domain.{도메인}/`)
+**we-adk-welfare-domain** (`com.beplepay.weadk.welfare.domain.{도메인}/`)
 ```
 ├── entity/        # @Entity
 └── repository/    # JpaRepository 확장
 ```
 
-**welfare-ax-user** (`com.beplepay.welfareaxbe.user.{도메인}/`)
+**we-adk-welfare-user** (`com.beplepay.weadk.welfare.user.{도메인}/`)
 ```
 ├── controller/    # @RestController
 ├── service/       # 인터페이스 + Impl
 └── dto/           # Request/Response
 ```
 
-**welfare-ax-common** (`com.beplepay.welfareaxbe.common/`)
+**we-adk-welfare-common** (`com.beplepay.weadk.welfare.common/`)
 ```
 ├── exception/     # ErrorCode, WelfareException, GlobalExceptionHandler
 ├── filter/        # TraceIdFilter — traceId MDC 저장·전파
@@ -39,9 +39,9 @@ sonnet
 ```
 
 **모듈 분리 원칙:**
-- Entity·Repository → `welfare-ax-domain`
-- Controller·Service·DTO → `welfare-ax-user` (경조사: `user/ceremony/`)
-- 업무 간 공유 로직 → `welfare-ax-common`으로 추출
+- Entity·Repository → `we-adk-welfare-domain`
+- Controller·Service·DTO → `we-adk-welfare-user` (경조사: `user/ceremony/`)
+- 업무 간 공유 로직 → `we-adk-welfare-common`으로 추출
 
 ### 공통 인프라 사용 원칙
 

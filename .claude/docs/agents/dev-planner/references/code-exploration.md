@@ -4,7 +4,7 @@ dev-planner 에이전트가 개발 계획서를 작성하기 전에 수행하는
 
 ## 1단계: 도메인 패키지 탐색
 ```
-src/main/java/com/beplepay/welfareaxbe/
+src/main/java/com/beplepay/weadk/welfare/
 ```
 - 기존 도메인 패키지 목록 확인
 - 요청 도메인과 관련된 패키지 식별 (ceremony/member/merchant/common)
@@ -16,9 +16,9 @@ src/main/java/com/beplepay/welfareaxbe/
 
 ## 3단계: 공통 모듈 확인
 ```
-src/main/java/com/beplepay/welfareaxbe/common/
-src/main/java/com/beplepay/welfareaxbe/config/
-src/main/java/com/beplepay/welfareaxbe/security/
+src/main/java/com/beplepay/weadk/welfare/common/
+src/main/java/com/beplepay/weadk/welfare/config/
+src/main/java/com/beplepay/weadk/welfare/security/
 ```
 - 재사용 가능한 예외 클래스
 - 공통 응답 래퍼

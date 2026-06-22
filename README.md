@@ -1,12 +1,12 @@
-# welfare-ax-be-harness
+# we-adk-welfare-harness
 
-**복지AX-BE** 프로젝트의 Claude Code 하네스 설정 파일 저장소입니다.
+**we-adk-welfare** 프로젝트의 Claude Code 하네스 설정 파일 저장소입니다.
 
 ## 개요
 
-이 레포는 [`welfare-ax-be`](https://github.com/beple-dev-1/welfare-ax-be) 백엔드 프로젝트와 함께 사용하는
-AI 개발 보조(Claude Code) 설정을 관리합니다.
-순수 개발 소스는 `welfare-ax-be` 레포에서 관리합니다.
+이 레포는 [`we-adk-welfare`](https://github.com/beple-dev-1/we-adk-welfare) 백엔드 프로젝트와 함께 사용하는
+AI 개발 보조(Claude Code) 설정을 관리합니다.  
+순수 개발 소스는 `we-adk-welfare` 레포에서 관리합니다.
 
 ## 구성
 
@@ -21,20 +21,20 @@ AI 개발 보조(Claude Code) 설정을 관리합니다.
 ├── skills/       # 슬래시 커맨드 절차 정의
 └── settings.json # 권한 설정
 CLAUDE.md         # Claude Code 프로젝트 지침
-HANDOFF.md        # 세션 인수인계 현황
 ```
+
+> `HANDOFF.md`, `HANDOFF_HISTORY.md` 는 세션 인수인계 파일로 개발자 로컬에서만 관리하며 이 레포에 포함되지 않습니다.
 
 ## 사용 방법
 
-`welfare-ax-be` 프로젝트 루트에 이 레포의 파일을 위치시킨 상태에서
+`we-adk-welfare` 프로젝트 루트에 이 레포의 파일을 위치시킨 상태에서
 Claude Code를 실행하면 하네스가 자동으로 적용됩니다.
 
 ```bash
-# welfare-ax-be 프로젝트 루트에서
-git clone https://github.com/beple-dev-1/welfare-ax-be-harness.git harness-tmp
+# we-adk-welfare 프로젝트 루트에서
+git clone https://github.com/beple-dev-1/we-adk-welfare-harness.git harness-tmp
 cp -r harness-tmp/.claude .
 cp harness-tmp/CLAUDE.md .
-cp harness-tmp/HANDOFF.md .
 rm -rf harness-tmp
 ```
 
@@ -42,5 +42,5 @@ rm -rf harness-tmp
 
 | 레포 | 설명 |
 |------|------|
-| [welfare-ax-be](https://github.com/beple-dev-1/welfare-ax-be) | 백엔드 개발 소스 |
-| [welfare-ax-be-harness](https://github.com/beple-dev-1/welfare-ax-be-harness) | Claude Code 하네스 설정 (이 레포) |
+| [we-adk-welfare](https://github.com/beple-dev-1/we-adk-welfare) | 백엔드 개발 소스 |
+| [we-adk-welfare-harness](https://github.com/beple-dev-1/we-adk-welfare-harness) | Claude Code 하네스 설정 (이 레포) |

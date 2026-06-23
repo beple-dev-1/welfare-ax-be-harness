@@ -1,0 +1,74 @@
+rules:
+  - id: welfare-transaction-rest-call-getforobj
+    patterns:
+      - pattern: $OBJ.getForObject(...)
+      - pattern-inside: |
+          @Transactional(...)
+          $RET $METHOD(...) {
+            ...
+          }
+    message: "[CRITICAL] RestTemplate.getForObject() inside @Transactional - DB pool exhaustion risk. Move REST call outside transaction boundary."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      category: welfare-critical
+
+  - id: welfare-transaction-rest-call-postforobj
+    patterns:
+      - pattern: $OBJ.postForObject(...)
+      - pattern-inside: |
+          @Transactional(...)
+          $RET $METHOD(...) {
+            ...
+          }
+    message: "[CRITICAL] RestTemplate.postForObject() inside @Transactional - DB pool exhaustion risk. Move REST call outside transaction boundary."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      category: welfare-critical
+
+  - id: welfare-transaction-rest-call-exchange
+    patterns:
+      - pattern: $OBJ.exchange(...)
+      - pattern-inside: |
+          @Transactional(...)
+          $RET $METHOD(...) {
+            ...
+          }
+    message: "[CRITICAL] RestTemplate.exchange() inside @Transactional - DB pool exhaustion risk. Move REST call outside transaction boundary."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      category: welfare-critical
+
+  - id: welfare-direct-rest-template-new
+    pattern: new RestTemplate()
+    message: "[CRITICAL] new RestTemplate() detected - use the shared HttpClient bean instead (welfare dev-backend policy)."
+    languages: [java]
+    severity: ERROR
+    metadata:
+      category: welfare-critical
+
+  - id: welfare-javax-import
+    pattern-regex: 'import\s+javax\.'
+    message: "[WARNING] javax.* import found - replace with jakarta.* (Spring Boot 4.x / Jakarta EE 10 project)."
+    languages: [java]
+    severity: WARNING
+    metadata:
+      category: welfare-convention
+
+  - id: welfare-entity-data-annotation
+    pattern-regex: '@(Data[\s\S]{0,300}@Entity|Entity[\s\S]{0,300}@Data)'
+    message: "[WARNING] @Data on @Entity class - equals/hashCode infinite loop risk on bidirectional relations. Use @Getter only."
+    languages: [java]
+    severity: WARNING
+    metadata:
+      category: welfare-convention
+
+  - id: welfare-native-query-select-star
+    pattern-regex: '@Query[\s\S]{0,500}[Ss][Ee][Ll][Ee][Cc][Tt]\s*\*'
+    message: "[WARNING] nativeQuery uses SELECT * - specify column names explicitly."
+    languages: [java]
+    severity: WARNING
+    metadata:
+      category: welfare-db

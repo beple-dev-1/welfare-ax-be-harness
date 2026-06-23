@@ -41,7 +41,10 @@ BUSINESS_TABLES=(
 
 for TABLE in "${BUSINESS_TABLES[@]}"; do
   TABLE_UPPER=$(echo "$TABLE" | tr '[:lower:]' '[:upper:]')
-  if [[ "$QUERY_UPPER" == *"FROM $TABLE_UPPER"* ]] || [[ "$QUERY_UPPER" == *"FROM ${TABLE_UPPER}S"* ]]; then
+  # 단어 경계 검사: 테이블명 뒤에 _·영문·숫자가 오면 더 긴 테이블명의 일부이므로 허용
+  # 예) FROM member_profile → 허용 / FROM member → 차단
+  if [[ "$QUERY_UPPER" =~ FROM[[:space:]]+"$TABLE_UPPER"([^_A-Z0-9]|$) ]] || \
+     [[ "$QUERY_UPPER" =~ FROM[[:space:]]+"${TABLE_UPPER}S"([^_A-Z0-9]|$) ]]; then
     # information_schema 나 pg_* 조회가 아닌 경우 차단
     if [[ "$QUERY_UPPER" != *"INFORMATION_SCHEMA"* ]] && [[ "$QUERY_UPPER" != *"PG_"* ]]; then
       echo "⛔ [check-postgres-query] 차단: 업무 데이터 직접 조회는 허용되지 않습니다."

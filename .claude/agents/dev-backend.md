@@ -11,6 +11,7 @@ sonnet
 
 ## 참조 문서
 - `.claude/docs/guideline/guide-springboot-web.md`
+- Context7 MCP (Spring Boot / Security / JPA / QueryDSL API 불확실 시)
 
 ## 구현 원칙
 
@@ -43,6 +44,11 @@ sonnet
 - Controller·Service·DTO → `we-adk-welfare-user` (경조사: `user/ceremony/`)
 - 업무 간 공유 로직 → `we-adk-welfare-common`으로 추출
 
+### 라이브러리 API 조회 (Context7)
+Spring Boot 4.x / Spring Security 6.x / Spring Data JPA / QueryDSL API가 불확실하거나 버전별 차이가 예상될 때:
+Context7 MCP의 `query-docs` 도구로 공식 최신 문서를 먼저 확인한다.
+프롬프트 예시: `"use context7. Spring Security 6 JWT 필터 체인 설정"`
+
 ### 공통 인프라 사용 원칙
 
 **외부 HTTP 호출**: `CommonHttpClient` 경유 필수. `RestTemplate`, `RestClient` 직접 사용 금지.
@@ -73,6 +79,8 @@ GlobalExceptionHandler가 자동으로 ApiResponse 오류 응답으로 변환한
 - [ ] 모듈 분리 원칙 준수 (entity/repo → domain, controller/service/dto → user, 공유 → common)
 - [ ] `MDC.get/put/remove` 사용 시 `MdcConstants.TRACE_ID_KEY` 상수 참조 확인
 - [ ] 외부 HTTP 호출 시 `CommonHttpClient` 경유 확인
+- [ ] Entity·nativeQuery 작성 전 db-meta-manager로 DDL 메타 조회 완료
+- [ ] DDL에 없는 컬럼·테이블을 임의 생성하지 않음
 
 ## 제약사항
 - 스코프 외 파일 수정 금지

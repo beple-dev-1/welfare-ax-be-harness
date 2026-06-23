@@ -22,6 +22,25 @@ haiku
 ### JPA Entity 매핑 확인
 - 기존 Entity 클래스와 실제 DB 테이블 간 매핑 일치 여부
 
+### nativeQuery 검증
+`@Query(nativeQuery = true)` 구문을 전달받은 경우, DDL 메타와 대조하여 다음을 검증한다.
+
+- 쿼리에서 참조하는 테이블명 존재 여부
+- 쿼리에서 사용하는 컬럼명 존재 여부 및 데이터 타입
+- WHERE·JOIN 절에 사용된 컬럼의 nullable 여부
+
+검증 결과를 다음 형식으로 출력한다:
+
+```
+| 항목 | 쿼리 참조값 | DDL 실제값 | 일치 |
+|------|------------|-----------|------|
+| 테이블 | ceremony_application | ✅ 존재 | ✅ |
+| 컬럼 | applicant_id | applicant_id (BIGINT) | ✅ |
+| 컬럼 | member_code | ❌ 없음 | ❌ |
+```
+
+불일치 항목 발견 시 → 구현 중단, 사용자에게 불일치 목록 보고 후 지시를 기다린다.
+
 ## SQL 탐색 템플릿 (PostgreSQL)
 ```sql
 -- 테이블 목록 조회
@@ -37,6 +56,20 @@ SELECT column_name, data_type, is_nullable, column_default,
 FROM information_schema.columns
 WHERE table_name = '{테이블명}'
 ORDER BY ordinal_position;
+
+-- nativeQuery 검증: 특정 컬럼 존재 확인
+SELECT column_name, data_type, is_nullable, column_default
+FROM information_schema.columns
+WHERE table_name  = '{테이블명}'
+  AND column_name = '{컬럼명}';
+-- 결과 0행 = DDL에 없는 컬럼 → 구현 중단
+
+-- nativeQuery 검증: 테이블 존재 확인
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+  AND table_name   = '{테이블명}';
+-- 결과 0행 = DDL에 없는 테이블 → 구현 중단
 ```
 
 ## 제약사항

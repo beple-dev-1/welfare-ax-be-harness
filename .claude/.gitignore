@@ -1,0 +1,6 @@
+*.local.json
+config/system.yaml
+tmp/
+.omc/
+__pycache__/
+*.pyc

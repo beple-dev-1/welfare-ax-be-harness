@@ -26,11 +26,29 @@
 - `.claude/skills/code-review/references/severity-rules.md`
 - `.claude/skills/code-review/references/project-rules.md`
 
-### 4단계: code-reviewer 에이전트 실행
-- code-reviewer 에이전트에게 diff와 기준 문서를 전달한다.
+### 4단계: Semgrep 보안 스캔
+변경된 Java 파일에 대해 Semgrep을 실행한다.
+
+```bash
+# 1순위: 프로젝트 전용 로컬 규칙 (네트워크 불필요, 항상 동작)
+semgrep --config ".claude/semgrep-rules/welfare-security.yaml" \
+  --quiet --json {변경된_java_파일_목록}
+
+# 2순위: 원격 규칙 (네트워크 가용 시 추가 실행)
+semgrep --config "p/java" --config "p/secrets" \
+  --quiet --json {변경된_java_파일_목록}
+```
+
+- Semgrep이 설치되지 않은 환경에서는 이 단계를 건너뛰고 그 사실을 결과에 명시한다.
+- 원격 규칙 다운로드 실패 시(네트워크/SSL 오류) 로컬 규칙만 사용하고 계속 진행한다.
+- Semgrep 탐지 항목은 code-reviewer 에이전트에 함께 전달하여 중복 판단 없이 CRITICAL로 상향 처리한다.
+- 로컬 규칙 탐지 항목: 트랜잭션 내 REST 호출, PII 로그 노출, javax 사용, @Entity @Data, SELECT *
+
+### 5단계: code-reviewer 에이전트 실행
+- code-reviewer 에이전트에게 diff, 기준 문서, Semgrep 스캔 결과(있는 경우)를 전달한다.
 - 심각도: CRITICAL (즉시 수정) / WARNING (권고) / INFO (참고)
 
-### 5단계: 결과 출력
+### 6단계: 결과 출력
 - 화면에 마크다운 형식으로 출력한다 (파일 저장 안 함).
 - CRITICAL 항목이 있으면 커밋 전 수정을 강력 권고한다.
 - CRITICAL 0건이면 커밋 가능임을 안내한다.

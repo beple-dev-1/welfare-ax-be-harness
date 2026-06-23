@@ -13,7 +13,7 @@ features:
     enabled: true
 
 # 스코프에 관계없이 모든 작업에서 접근 가능한 전역 경로
-# target/은 git 추적 대상이며 feature 브랜치에서 생성 후 PR 머지로 main에 반영된다.
+# target/은 git으로 추적하지 않으며 로컬 전용 산출물로 관리된다. (.gitignore 제외 대상)
 globalAllowedPaths:
   - target/works/**          # 개발 브리프 (/dev-interview 생성)
   - target/plans/**          # 개발·테스트 계획서 (/dev-plan 생성)

@@ -18,7 +18,7 @@
 | 프레임워크 | Spring Boot 4.1.0 (Jakarta EE 10 기반) |
 | Web | Spring MVC (`spring-boot-starter-webmvc`) |
 | View | Thymeleaf (`spring-boot-starter-thymeleaf`) |
-| 프론트엔드 | JS (IIFE 모듈 패턴), CSS |
+| 프론트엔드 | JS (IIFE 모듈 패턴), CSS, Bootstrap 5.x |
 | 보안 | Spring Security 6.x (`spring-boot-starter-security`) |
 | 인증 | JWT (`io.jsonwebtoken:jjwt 0.12.6`) |
 | ORM | Spring Data JPA 3.x / Hibernate 6 |

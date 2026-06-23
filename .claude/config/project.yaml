@@ -21,7 +21,7 @@ projects:
       - condition: jpa
         guide: guide-jpa
       - condition: thymeleaf
-        guide: guide-frontend
+        guide: guide-frontend/common
     outputDir: target
 
   - name: we-adk-welfare-admin

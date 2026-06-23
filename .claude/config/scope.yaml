@@ -1,12 +1,14 @@
 # 작업 스코프 정의
 # /develop {스코프} 호출 시 AI의 수정 가능 경로를 제한한다.
 #
-# 분리 원칙:
-#   ceremony/* — 경조사 전용 (we-adk-welfare-user + we-adk-welfare-domain)
-#   member/*, merchant/* — 공통 도메인 (we-adk-welfare-domain)
-#   common/* — 공통 인프라 (we-adk-welfare-common)
-#   admin/* — 관리자 영역 (we-adk-welfare-admin)
-#   batch/* — 배치 영역 (we-adk-welfare-batch)
+# 그룹 구조:
+#   service 그룹 — 서비스 도메인별 전용 (ceremony: user + domain)
+#                  새 서비스 도메인(병원비, 주거비 등) 추가 시 이 그룹에 scope entry 추가
+#   core 그룹   — 복지 공통 도메인 엔티티 (member, merchant: domain)
+#                  모든 서비스가 공유하는 핵심 도메인 모델
+#   infra 그룹  — 공통 인프라 및 실행 모듈 (common, admin, batch)
+#
+# 하네스 재사용 시: scope.yaml 전체를 새 조직 구조에 맞게 교체 (skill 본문 수정 불필요)
 
 features:
   scope:
@@ -19,74 +21,87 @@ globalAllowedPaths:
   - target/plans/**          # 개발·테스트 계획서 (/dev-plan 생성)
   - target/test-reports/**   # 테스트 결과서 (/qa-test 생성)
 
-scopes:
-  - id: ceremony
-    description: 경조사지원 전용 (신청·승인·지급·정산)
-    allowedPaths:
-      - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/ceremony/**
-      - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/ceremony/**
-      - we-adk-welfare-user/src/main/resources/templates/ceremony/**
-      - we-adk-welfare-user/src/main/resources/static/js/ceremony/**
-      - we-adk-welfare-user/src/main/resources/static/css/ceremony/**
-      - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/ceremony/**
-      - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/ceremony/**
-    sharedModules:
-      - we-adk-welfare-common/src/main/java/**
-      - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
-      - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
+groups:
 
-  - id: member
-    description: 회원 관리 — 복지 공통 도메인
-    allowedPaths:
-      - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
-      - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/member/**
-    sharedModules:
-      - we-adk-welfare-common/src/main/java/**
+  service:
+    name: 서비스 도메인
+    scopes:
+      - id: ceremony
+        project: we-adk-welfare-user
+        description: 경조사지원 전용 (신청·승인·지급·정산)
+        allowedPaths:
+          - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/ceremony/**
+          - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/ceremony/**
+          - we-adk-welfare-user/src/main/resources/templates/ceremony/**
+          - we-adk-welfare-user/src/main/resources/static/js/ceremony/**
+          - we-adk-welfare-user/src/main/resources/static/css/ceremony/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/ceremony/**
+          - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/ceremony/**
+        sharedModules:
+          - we-adk-welfare-common/src/main/java/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
 
-  - id: merchant
-    description: 가맹점 관리 — 복지 공통 도메인
-    allowedPaths:
-      - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
-      - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/merchant/**
-    sharedModules:
-      - we-adk-welfare-common/src/main/java/**
+  core:
+    name: 복지 공통 도메인
+    scopes:
+      - id: member
+        project: we-adk-welfare-domain
+        description: 회원 관리 — 복지 공통 도메인
+        allowedPaths:
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
+          - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/member/**
+        sharedModules:
+          - we-adk-welfare-common/src/main/java/**
+      - id: merchant
+        project: we-adk-welfare-domain
+        description: 가맹점 관리 — 복지 공통 도메인
+        allowedPaths:
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
+          - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/merchant/**
+        sharedModules:
+          - we-adk-welfare-common/src/main/java/**
 
-  - id: common
-    description: 공통 인프라 (예외, 응답 래퍼, 유틸, 보안, HTTP 클라이언트, 분산 추적, 설정)
-    allowedPaths:
-      - we-adk-welfare-common/src/main/java/**
-      - we-adk-welfare-common/src/test/java/**
-      - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/config/**
-      - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/security/**
-      - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/client/**
-      - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/config/**
-      - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/security/**
-      - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/client/**
-      - we-adk-welfare-user/src/main/resources/application.yaml
-      - we-adk-welfare-user/src/main/resources/application-local.yaml
-      - we-adk-welfare-user/src/main/resources/application-dev.yaml
-      - we-adk-welfare-user/src/main/resources/application-api.yaml
-      - we-adk-welfare-user/src/main/resources/logback-spring.xml
-    sharedModules: []
-
-  - id: admin
-    description: 관리자 API (we-adk-welfare-admin)
-    allowedPaths:
-      - we-adk-welfare-admin/src/main/java/**
-      - we-adk-welfare-admin/src/test/java/**
-      - we-adk-welfare-admin/src/main/resources/application.yaml
-      - we-adk-welfare-admin/src/main/resources/application-local.yaml
-    sharedModules:
-      - we-adk-welfare-domain/src/main/java/**
-      - we-adk-welfare-common/src/main/java/**
-
-  - id: batch
-    description: 배치 처리 (we-adk-welfare-batch)
-    allowedPaths:
-      - we-adk-welfare-batch/src/main/java/**
-      - we-adk-welfare-batch/src/test/java/**
-      - we-adk-welfare-batch/src/main/resources/application.yaml
-      - we-adk-welfare-batch/src/main/resources/application-local.yaml
-    sharedModules:
-      - we-adk-welfare-domain/src/main/java/**
-      - we-adk-welfare-common/src/main/java/**
+  infra:
+    name: 공통 인프라·실행
+    scopes:
+      - id: common
+        project: we-adk-welfare-common
+        description: 공통 인프라 (예외, 응답 래퍼, 유틸, 보안, HTTP 클라이언트, 분산 추적, 설정)
+        allowedPaths:
+          - we-adk-welfare-common/src/main/java/**
+          - we-adk-welfare-common/src/test/java/**
+          - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/config/**
+          - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/security/**
+          - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/client/**
+          - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/config/**
+          - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/security/**
+          - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/client/**
+          - we-adk-welfare-user/src/main/resources/application.yaml
+          - we-adk-welfare-user/src/main/resources/application-local.yaml
+          - we-adk-welfare-user/src/main/resources/application-dev.yaml
+          - we-adk-welfare-user/src/main/resources/application-api.yaml
+          - we-adk-welfare-user/src/main/resources/logback-spring.xml
+        sharedModules: []
+      - id: admin
+        project: we-adk-welfare-admin
+        description: 관리자 API (we-adk-welfare-admin)
+        allowedPaths:
+          - we-adk-welfare-admin/src/main/java/**
+          - we-adk-welfare-admin/src/test/java/**
+          - we-adk-welfare-admin/src/main/resources/application.yaml
+          - we-adk-welfare-admin/src/main/resources/application-local.yaml
+        sharedModules:
+          - we-adk-welfare-domain/src/main/java/**
+          - we-adk-welfare-common/src/main/java/**
+      - id: batch
+        project: we-adk-welfare-batch
+        description: 배치 처리 (we-adk-welfare-batch)
+        allowedPaths:
+          - we-adk-welfare-batch/src/main/java/**
+          - we-adk-welfare-batch/src/test/java/**
+          - we-adk-welfare-batch/src/main/resources/application.yaml
+          - we-adk-welfare-batch/src/main/resources/application-local.yaml
+        sharedModules:
+          - we-adk-welfare-domain/src/main/java/**
+          - we-adk-welfare-common/src/main/java/**

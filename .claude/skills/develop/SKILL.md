@@ -65,7 +65,7 @@ argument-hint: "{스코프} [과업번호] [--refresh|--full-rescan|--fe|자동]
 
 `$ARGUMENTS` 에서 스코프 식별자 + `{paramValue}`(선택) + 과업번호 + 플래그 추출.
 
-- 스코프 식별자는 `.claude/config/scope.yaml` `groups.*.scopes[].id` 와 대조.
+- 스코프 식별자는 `.claude/config/scope.yaml` `groups.{groupKey}.scopes[].id` 와 대조.
 - 두 번째 인자(`paramValue`)는 entry `subScope.paramName` 정의된 경우만 허용 → `references/sub-scope-rules.md` §1 generic 알고리즘으로 검증.
 - 스코프 미존재 → `templates/output-templates.md` 의 "스코프 미존재 시 오류 메시지" 출력 후 중단.
 
@@ -90,7 +90,7 @@ argument-hint: "{스코프} [과업번호] [--refresh|--full-rescan|--fe|자동]
 | `{projectType}` | project.yaml `projects[].guideline.backend` 기반 분류 (derived by name) |
 | `{multiModule}` | project.yaml `projects[].multiModule` |
 | `{effectiveAllowedPaths}` | `paramValue` 없음 → entry `allowedPaths` / `paramValue` 있음 → `subScope.allowedPaths` 변수 치환 결과 (`sub-scope-rules.md` §1-2) |
-| `{sharedModule}` | entry `sharedModule` (또는 null) |
+| `{sharedModules}` | entry `sharedModules[]` (공유 모듈 경로 배열, 없으면 빈 배열) |
 | `{groupSharedRange}` | `paramValue` 있고 `scanPaths == "@inherit-shared"` 시 그룹 `sharedCodeRange` 확장 결과 (`sub-scope-rules.md` §2-2). 그 외 빈 집합 |
 | `{guideline}` | project.yaml `projects[].guideline` (= `{backend, frontend?}`) |
 | `{refReadScopes}` | `--ref-read` 값 |
@@ -191,7 +191,7 @@ judgeAccess(filePath, operation):
   # 1. 메인 스코프 (읽기+쓰기)
   # paramValue 활성 시 effectiveAllowedPaths = subScope.allowedPaths 변수 치환 결과 (entry.allowedPaths 의 `**` 무시)
   # paramValue 비활성 시 effectiveAllowedPaths = entry.allowedPaths
-  if filePath under {effectiveAllowedPaths} OR mainScope.sharedModule OR {groupSharedRange}:
+  if filePath under {effectiveAllowedPaths} OR any(mainScope.sharedModules) OR {groupSharedRange}:
     return ALLOW
 
   # 2. 참조 스코프 (읽기만)

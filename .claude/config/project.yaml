@@ -1,5 +1,7 @@
 workspaceName: we-adk-welfare
 outputDir: target
+planSkill: dev-plan
+tempDir: target/tmp
 basePackagePattern: com.beplepay.weadk.welfare
 commonUtilsArtifact: "we-adk-welfare-common"
 tracing:

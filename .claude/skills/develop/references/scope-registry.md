@@ -16,7 +16,7 @@ groups:
       - id: {스코프 식별자}             # 사용자가 /develop 인자로 입력
         project: {프로젝트명}            # project.yaml `projects[].name` 참조
         allowedPaths: [{허용 경로 목록}] # 메인 스코프 쓰기 허용 범위 (프로젝트 루트 기준)
-        sharedModule: {공유 모듈 또는 null}
+        sharedModules: [{공유 모듈 경로 목록}]   # 없으면 []
         subScope:                       # 선택 — 하위 스코프 지원 시
           paramName: {파라미터명}        # 예: jobId — /develop 두 번째 인자명
           validatePath: {경로}           # paramValue 유효성 검증 디렉토리 (변수 치환 후 존재 확인)
@@ -97,3 +97,66 @@ projects:
 |---|---|
 | `.claude/config/scope.yaml` | 조직 프로젝트 인벤토리 |
 | `.claude/config/project.yaml` | 패키지 패턴, DB 메타 등 워크스페이스 글로벌 |
+
+---
+
+## 7. 그룹 정의 (현 프로젝트)
+
+현 프로젝트(`we-adk-welfare`)의 `scope.yaml` 은 3개 그룹으로 구성된다.
+
+### service — 서비스 도메인
+
+플랫폼이 사용자에게 제공하는 **업무 단위**. 비즈니스 요구사항이 직접 구현되는 레이어.
+
+| 스코프 | 주 프로젝트 | 설명 |
+|---|---|---|
+| `ceremony` | `we-adk-welfare-user` | 경조사지원 — 신청·승인·지급·정산 |
+
+> 새 서비스 도메인(병원비 지원, 주거비 지원 등) 추가 시 이 그룹에 scope entry를 추가한다.
+
+### core — 복지 공통 도메인
+
+**모든 서비스 도메인이 공통으로 의존하는 핵심 도메인 엔티티**.
+서비스가 추가되어도 이 그룹의 구성원은 플랫폼 전체 기반으로 유지된다.
+
+| 스코프 | 주 프로젝트 | 설명 |
+|---|---|---|
+| `member` | `we-adk-welfare-domain` | 혜택을 받는 회원 엔티티·레포지토리 |
+| `merchant` | `we-adk-welfare-domain` | 혜택을 사용하는 가맹점 엔티티·레포지토리 |
+
+### infra — 공통 인프라·실행
+
+비즈니스 로직과 무관하게 **플랫폼 전체를 가동시키는 기반**.
+어떤 서비스 도메인이 추가되어도 이 그룹은 변경되지 않는다.
+
+| 스코프 | 주 프로젝트 | 설명 |
+|---|---|---|
+| `common` | `we-adk-welfare-common` | 예외·응답 래퍼·JWT·보안 설정 등 기술 인프라 |
+| `admin` | `we-adk-welfare-admin` | 관리자 API 실행 모듈 (skeleton) |
+| `batch` | `we-adk-welfare-batch` | 배치 처리 실행 모듈 (skeleton) |
+
+### 의존 방향
+
+```
+service (ceremony, ...)
+    ├──→ core   (sharedModules 참조)
+    └──→ infra/common
+
+core (member, merchant)
+    └──→ infra/common
+
+infra/admin, infra/batch
+    ├──→ core 전체   (sharedModules 참조)
+    └──→ infra/common
+```
+
+의존은 항상 단방향(`service → core → infra`). 역방향 참조는 발생하지 않는다.
+
+### we-adk-welfare-user 모듈의 스코프 분산
+
+`we-adk-welfare-user` 는 실행 모듈로, 내부 패키지 성격에 따라 두 스코프로 분산된다.
+
+| 패키지 | 담당 스코프 |
+|---|---|
+| `user/ceremony/**` | `ceremony` (service 그룹) |
+| `user/config/**`, `user/security/**`, `user/client/**` | `common` (infra 그룹) |

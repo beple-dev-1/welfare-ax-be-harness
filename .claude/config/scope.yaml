@@ -42,6 +42,22 @@ groups:
           - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
           - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
 
+      - id: medical
+        project: we-adk-welfare-user
+        description: 병원비지원 전용 (신청·심사·지급)
+        allowedPaths:
+          - we-adk-welfare-user/src/main/java/com/beplepay/weadk/welfare/user/medical/**
+          - we-adk-welfare-user/src/test/java/com/beplepay/weadk/welfare/user/medical/**
+          - we-adk-welfare-user/src/main/resources/templates/medical/**
+          - we-adk-welfare-user/src/main/resources/static/js/medical/**
+          - we-adk-welfare-user/src/main/resources/static/css/medical/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/medical/**
+          - we-adk-welfare-domain/src/test/java/com/beplepay/weadk/welfare/domain/medical/**
+        sharedModules:
+          - we-adk-welfare-common/src/main/java/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/member/**
+          - we-adk-welfare-domain/src/main/java/com/beplepay/weadk/welfare/domain/merchant/**
+
   core:
     name: 복지 공통 도메인
     scopes:

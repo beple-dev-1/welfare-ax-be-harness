@@ -7,8 +7,8 @@
 ## 워크스페이스 개요
 
 **we-adk-welfare** 는 비플페이(beplepay)가 개발 중인 복지혜택 관리 플랫폼입니다.
-첫 번째 업무 도메인: **경조사지원** (결혼·출산·장례 등 경조사 이벤트에 대한 복지 지원)
-향후 동일 프로젝트에 다른 성격의 복지 업무가 추가되므로, **공통 레이어**와 **경조사 전용 레이어**를 분리하여 관리한다.
+진행 중인 업무 도메인: **경조사지원** (결혼·출산·장례 등), **병원비지원** (의료비 신청·심사·지급)
+향후 동일 프로젝트에 다른 성격의 복지 업무가 추가되므로, **공통 레이어**와 **업무 전용 레이어**를 분리하여 관리한다.
 
 ## 기술 스택
 
@@ -39,14 +39,19 @@ we-adk-welfare/                         ← 루트 (오케스트레이션만, sr
 │   └── com.beplepay.weadk.welfare.domain
 │       ├── member/                 (회원 Entity, Repository)
 │       ├── merchant/               (가맹점 Entity, Repository)
-│       └── ceremony/               (경조사 Entity, Repository)
+│       ├── ceremony/               (경조사 Entity, Repository)
+│       └── medical/                (병원비 Entity, Repository)
 ├── we-adk-welfare-user/                ← 사용자 API 실행 모듈 (port: 8080)
 │   └── com.beplepay.weadk.welfare.user
 │       ├── config/                 (Security, Web 설정)
 │       ├── security/               (JWT 필터, 토큰 처리)
-│       └── ceremony/
-│           ├── application/        (경조사 신청)
-│           ├── approval/           (승인 처리)
+│       ├── ceremony/
+│       │   ├── application/        (경조사 신청)
+│       │   ├── approval/           (승인 처리)
+│       │   └── payment/            (지급 처리)
+│       └── medical/
+│           ├── application/        (병원비 신청)
+│           ├── review/             (심사 처리)
 │           └── payment/            (지급 처리)
 │   └── resources/
 │       ├── templates/              (Thymeleaf 템플릿)
@@ -128,7 +133,7 @@ Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
 | MR 리뷰 | `/mr-review` | GitLab MR diff 리뷰 |
 | 인수인계 | `/pack` | 세션 종료 전 상태 기록 |
 
-스코프 목록: `ceremony`, `member`, `merchant`, `common`, `admin`, `batch`
+스코프 목록: `ceremony`, `medical`, `member`, `merchant`, `common`, `admin`, `batch`
 
 ## 하네스 구조
 
@@ -154,4 +159,4 @@ Windows에서는 `.\gradlew` 또는 `gradlew.bat` 사용.
 - 트랜잭션 내 외부 REST 호출 금지 (DB 커넥션풀 고갈 위험).
 - `javax.*` 대신 `jakarta.*` 사용 (Spring Boot 4.x / Jakarta EE 10).
 - Entity에 `@Data` 사용 금지.
-- `ceremony/` 패키지 코드가 다른 복지 업무 패키지를 직접 참조하지 않도록 주의 (공통은 `common/` 경유).
+- `ceremony/`, `medical/` 등 업무 패키지 간 직접 참조 금지 (공통은 `common/` 경유).

@@ -13,7 +13,7 @@ db:
 projects:
   - name: we-adk-welfare-user
     shortName: user
-    description: 사용자 API (경조사 신청·승인·지급·정산)
+    description: 사용자 API (경조사·병원비 신청·승인·지급·정산)
     dir: we-adk-welfare-user
     buildTool: gradle
     guideline: guide-springboot-web

@@ -44,6 +44,19 @@ keywordExpansion:
     - point
     - remaining
     - quota
+  병원비:
+    - medical
+    - hospital
+    - healthcare
+    - medical_expense
+  진료:
+    - treatment
+    - diagnosis
+    - medical_record
+  청구:
+    - claim
+    - bill
+    - invoice
 
 koreanMap:
   경조사: ceremony
@@ -61,6 +74,11 @@ koreanMap:
   결혼: wedding
   출산: birth
   장례: funeral
+  병원비: medical
+  병원: hospital
+  진료: treatment
+  청구: claim
+  심사: review
 
 securityKeywords:
   - encrypt
